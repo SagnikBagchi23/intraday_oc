@@ -353,6 +353,7 @@
     display: flex;
     align-items: center;
     padding: 4px 8px;
+    background: var(--backgroundSurfaceZ1);
   }
   .appbar__icon-btn {
     width: 40px; height: 40px;
@@ -535,7 +536,7 @@
   .paired-label { color: var(--contentSecondary); }
 
   /* bottom dock */
-  .dock { flex-shrink: 0; border-top: 1px solid var(--borderPrimary); }
+  .dock { flex-shrink: 0; border-top: 1px solid var(--borderPrimary); background: var(--backgroundSurfaceZ1); }
   .dock__balance {
     display: flex; align-items: center; justify-content: space-between;
     padding: 12px 16px 0;
@@ -604,7 +605,7 @@
 <div class="segtabs" id="segtabs">
   <div class="segtabs__indicator" id="segtabsIndicator"></div>
   <button class="segtabs__btn heading-eyebrow" data-tab="existing" data-active="true">Existing</button>
-  <button class="segtabs__btn heading-eyebrow" data-tab="paired">Paired Row</button>
+  <button class="segtabs__btn heading-eyebrow" data-tab="paired">I1</button>
 </div>
 
 <!-- Phone frame (360x800) -->
@@ -741,7 +742,7 @@
           </div>
         </div>
 
-        <!-- ================= ITERATION 2: PAIRED ROW (SL + TGT side by side, one row) ================= -->
+        <!-- ================= ITERATION 2: I1 (SL + TGT side by side, one row) ================= -->
         <div class="iteration-panel" data-panel="paired">
           <div class="add-sltgt-row">
             <button class="add-sltgt mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" id="addBtn-paired">
