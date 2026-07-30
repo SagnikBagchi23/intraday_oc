@@ -88,7 +88,7 @@
     --backgroundTransparent:    transparent;
     --backgroundInversePrimary: #F2F5F7;
     --borderPrimary:            #252A2C;
-    --borderNeutral:            #4A5254;
+    --borderNeutral:            #353839;
     --borderAccent:             #04B488;
     --borderNegative:           #ED5533;
     --borderWarning:            #E7A71E;
@@ -146,7 +146,7 @@
   .segtabs__indicator {
     position: absolute;
     top: 2px;
-    left: 2px;
+    left: 0;
     height: calc(100% - 4px);
     border-radius: 99px;
     background: var(--backgroundSurfaceZ2);
@@ -276,7 +276,7 @@
   .mds-pill[data-selected="true"] {
     background: var(--backgroundTertiary);
     border-color: var(--borderNeutral);
-    border-width: 1px;
+    border-width: 2px;
     color: var(--contentPrimary);
   }
 
@@ -424,9 +424,9 @@
     transition: border-color 150ms var(--ease-out), padding 150ms var(--ease-out), background 150ms var(--ease-out);
   }
   .oc-input.is-focus,
-  .oc-input.is-typing { border: 1px solid var(--borderNeutral); padding: 12px; }
-  .oc-input.is-warning { border: 1px solid var(--borderWarning); padding: 12px; }
-  .oc-input.is-error   { border: 1px solid var(--borderNegative); padding: 12px; }
+  .oc-input.is-typing { border: 2px solid var(--borderNeutral); padding: 11px; }
+  .oc-input.is-warning { border: 2px solid var(--borderWarning); padding: 11px; }
+  .oc-input.is-error   { border: 2px solid var(--borderNegative); padding: 11px; }
   .oc-input.is-disabled {
     background: var(--backgroundDisabled);
     border-color: var(--borderDisabled);
@@ -511,7 +511,7 @@
   .paired-label { color: var(--contentSecondary); }
 
   /* bottom dock */
-  .dock { flex-shrink: 0; border-top: 1px solid var(--borderPrimary); position: relative; }
+  .dock { flex-shrink: 0; border-top: 1px solid var(--borderPrimary); }
   .dock__balance {
     display: flex; align-items: center; justify-content: space-between;
     padding: 12px 16px 0;
@@ -538,40 +538,14 @@
 
   /* ---- numpad ---- */
   .numpad {
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    background: var(--backgroundSurfaceZ1);
-    border-top: 1px solid var(--borderPrimary);
-    border-radius: 20px 20px 0 0;
-    box-shadow: 0 -8px 24px -8px rgba(0,0,0,0.5);
-    transform: translateY(100%);
-    transition: transform 320ms var(--ease-drawer);
-    z-index: 60;
-  }
-  .numpad.is-open { transform: translateY(0); }
-  .numpad__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px 10px;
-  }
-  .numpad__label { color: var(--contentTertiary); }
-  .numpad__done {
+    flex-shrink: 0;
     background: none;
-    border: none;
-    color: var(--contentAccent);
-    text-decoration: underline;
-    cursor: pointer;
-    height: 24px;
-    padding: 0 2px;
-    transition: opacity 150ms var(--ease-out), transform 120ms var(--ease-out);
   }
-  .numpad__done:active { transform: scale(0.94); }
   .numpad__keys {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 0 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    padding: 16px;
   }
   .numpad__row {
     display: flex;
@@ -778,22 +752,17 @@
         <div class="dock__balance">
           <span class="lbl body-small">Balance: ₹1,00,000</span>
           <div class="margin-group">
-            <button class="mds-btn mds-btn--tertiary mds-btn--muted mds-btn--small mds-btn--compact body-small-heavy" id="marginBtn">Margin (5x)</button>
+            <span class="body-small" id="marginBtn" style="color:var(--contentSecondary);border-bottom:1px dashed var(--contentSecondary);cursor:pointer;">Margin (5x):</span>
             <span class="margin-value body-small" id="marginValue">₹0</span>
           </div>
         </div>
         <div class="dock__cta-wrap">
           <button class="mds-btn mds-btn--primary mds-btn--large" id="ctaBuy">Buy</button>
         </div>
-        <div class="home-indicator"><span></span></div>
       </div>
 
       <!-- Numpad -->
-      <div class="numpad is-open" id="numpad">
-        <div class="numpad__header">
-          <span class="numpad__label body-small" id="numpadLabel">Price</span>
-          <button class="numpad__done body-base-heavy" id="numpadDone">Done</button>
-        </div>
+      <div class="numpad" id="numpad">
         <div class="numpad__keys">
           <div class="numpad__row">
             <button class="numpad__key" data-digit="1">1</button>
@@ -819,6 +788,7 @@
           </div>
         </div>
       </div>
+      <div class="home-indicator"><span></span></div>
     </div>
   </div>
 </div>
@@ -1012,18 +982,7 @@
 
   /* ---------- Numpad ---------- */
   const numpad = document.getElementById('numpad');
-  const numpadLabel = document.getElementById('numpadLabel');
-  const numpadDone = document.getElementById('numpadDone');
   let activeField = null;
-
-  const fieldLabels = {
-    'qty': 'Quantity',
-    'price': 'Price',
-    'sl-existing': 'Stoploss (SL)',
-    'tgt-existing': 'Target (TGT)',
-    'sl-paired': 'Stoploss (SL)',
-    'tgt-paired': 'Target (TGT)'
-  };
 
   function currentValue(key) {
     return fieldValues[key] || '';
@@ -1047,8 +1006,6 @@
     activeField = key;
     const field = document.querySelector('[data-field="' + key + '"]');
     if (field) field.classList.add('is-focus', 'is-typing');
-    numpadLabel.textContent = fieldLabels[key] || '';
-    numpad.classList.add('is-open');
   }
 
   function closeNumpad() {
@@ -1057,10 +1014,7 @@
       if (field) field.classList.remove('is-focus', 'is-typing');
     }
     activeField = null;
-    numpad.classList.remove('is-open');
   }
-
-  numpadDone.addEventListener('click', closeNumpad);
 
   document.querySelectorAll('.numpad__key[data-digit]').forEach(key => {
     key.addEventListener('click', () => {
