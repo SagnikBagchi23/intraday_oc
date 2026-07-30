@@ -549,7 +549,7 @@
   .input-x:hover { color: var(--contentPrimary); }
 
   /* ---- Iteration content sections ---- */
-  .sltgt-section { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
+  .sltgt-section { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; padding-bottom: 12px; }
 
   /* Iteration 2: paired row */
   .paired-row {
@@ -663,6 +663,7 @@
   <button class="segtabs__btn heading-eyebrow" data-tab="existing" data-active="true">Existing</button>
   <button class="segtabs__btn heading-eyebrow" data-tab="paired">I1</button>
   <button class="segtabs__btn heading-eyebrow" data-tab="inline">I2</button>
+  <button class="segtabs__btn heading-eyebrow" data-tab="nodismiss">I3</button>
 </div>
 
 <!-- Phone frame (360x800) -->
@@ -902,6 +903,61 @@
           </div>
         </div>
 
+        <!-- ================= ITERATION 4: I3 (no dismiss, non-mandatory) ================= -->
+        <div class="iteration-panel" data-panel="nodismiss">
+          <div class="add-sltgt-row">
+            <button class="add-sltgt mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" id="addBtn-nodismiss">
+              <span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-add-01"></i></span>
+              <span class="add-sltgt__text">Add SL/TGT</span>
+            </button>
+          </div>
+          <div class="sltgt-section">
+            <div class="field-expander" id="expander-sl-nodismiss">
+              <div class="field-expander__inner">
+                <div class="remover">
+                  <div class="divider"></div>
+                </div>
+                <div class="row">
+                  <div class="row__label body-large">Stoploss (SL)</div>
+                  <div class="field-col">
+                    <div class="oc-input is-empty" data-field="sl-nodismiss" tabindex="0">
+                      <span class="oc-input__value body-large-heavy"></span>
+                      <span class="oc-input__cursor"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="est-pnl" data-pnl="sl-nodismiss">
+                  <span class="est-pnl__label body-small">Est. loss</span>
+                  <span class="est-pnl__value body-small-heavy">--</span>
+                  <button class="est-pnl__toggle" data-pnl-toggle="sl-nodismiss"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="field-expander" id="expander-tgt-nodismiss">
+              <div class="field-expander__inner">
+                <div class="remover">
+                  <div class="divider"></div>
+                </div>
+                <div class="row">
+                  <div class="row__label body-large">Target (TGT)</div>
+                  <div class="field-col">
+                    <div class="oc-input is-empty" data-field="tgt-nodismiss" tabindex="0">
+                      <span class="oc-input__value body-large-heavy"></span>
+                      <span class="oc-input__cursor"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="est-pnl" data-pnl="tgt-nodismiss">
+                  <span class="est-pnl__label body-small">Est. profit</span>
+                  <span class="est-pnl__value body-small-heavy">--</span>
+                  <button class="est-pnl__toggle" data-pnl-toggle="tgt-nodismiss"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- Bottom dock -->
@@ -1004,7 +1060,7 @@
     addBtn.style.display = (slOpen || tgtOpen) ? 'none' : '';
   }
 
-  ['existing', 'paired', 'inline'].forEach(key => {
+  ['existing', 'paired', 'inline', 'nodismiss'].forEach(key => {
     const addBtn = document.getElementById('addBtn-' + key);
     addBtn.addEventListener('click', () => {
       const slExp = document.getElementById('expander-sl-' + key);
@@ -1070,7 +1126,9 @@
     'sl-paired': '490',
     'tgt-paired': '',
     'sl-inline': '490',
-    'tgt-inline': ''
+    'tgt-inline': '',
+    'sl-nodismiss': '',
+    'tgt-nodismiss': ''
   };
 
   function validateAndRender(fieldKey, kind, rawVal) {
@@ -1104,6 +1162,8 @@
     validateAndRender('tgt-paired', 'tgt', fieldValues['tgt-paired']);
     validateAndRender('sl-inline', 'sl', fieldValues['sl-inline']);
     validateAndRender('tgt-inline', 'tgt', fieldValues['tgt-inline']);
+    validateAndRender('sl-nodismiss', 'sl', fieldValues['sl-nodismiss']);
+    validateAndRender('tgt-nodismiss', 'tgt', fieldValues['tgt-nodismiss']);
     updateAllPnl();
     updateCtaState();
   }
@@ -1191,7 +1251,7 @@
   }
 
   function updateAllPnl() {
-    ['sl-existing', 'tgt-existing', 'sl-paired', 'tgt-paired', 'sl-inline', 'tgt-inline'].forEach(updateEstPnl);
+    ['sl-existing', 'tgt-existing', 'sl-paired', 'tgt-paired', 'sl-inline', 'tgt-inline', 'sl-nodismiss', 'tgt-nodismiss'].forEach(updateEstPnl);
   }
 
   document.addEventListener('click', function(e) {
