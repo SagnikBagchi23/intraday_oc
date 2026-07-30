@@ -414,6 +414,7 @@
     justify-content: flex-end;
     gap: 4px;
     padding: 0 16px;
+    cursor: pointer;
   }
   .est-pnl__label { color: var(--contentSecondary); }
   .est-pnl__value { color: var(--contentSecondary); }
@@ -508,19 +509,21 @@
   }
   .add-sltgt {
     margin: 0;
-    text-decoration: none;
+    border-radius: 0;
+  }
+  .add-sltgt__text {
     border-bottom: 1px dashed var(--contentSecondary);
     padding-bottom: 1px;
   }
 
-  /* expand/collapse wrapper using grid-template-rows trick */
-  .expander {
+  /* per-field expand/collapse using grid-template-rows */
+  .field-expander {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 280ms var(--ease-out);
+    transition: grid-template-rows 200ms var(--ease-out);
   }
-  .expander.is-open { grid-template-rows: 1fr; }
-  .expander__inner { overflow: hidden; min-height: 0; }
+  .field-expander.is-open { grid-template-rows: 1fr; }
+  .field-expander__inner { overflow: hidden; min-height: 0; }
 
   /* ---- Iteration content sections ---- */
   .sltgt-section { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
@@ -686,55 +689,53 @@
           <div class="add-sltgt-row">
             <button class="add-sltgt mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" id="addBtn-existing">
               <span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-add-01"></i></span>
-              Add SL/TGT
+              <span class="add-sltgt__text">Add SL/TGT</span>
             </button>
           </div>
-          <div class="expander" id="expander-existing">
-            <div class="expander__inner">
-              <div class="sltgt-section">
-
-                <div>
-                  <div class="remover">
-                    <div class="divider"></div>
-                    <button class="remover__x" data-remove="existing"><span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span></button>
-                  </div>
-                  <div class="row">
-                    <div class="row__label body-large">Stoploss (SL)</div>
-                    <div class="field-col">
-                      <div class="oc-input" data-field="sl-existing" tabindex="0">
-                        <span class="oc-input__value body-large-heavy">490</span>
-                        <span class="oc-input__cursor"></span>
-                      </div>
+          <div class="sltgt-section">
+            <div class="field-expander" id="expander-sl-existing">
+              <div class="field-expander__inner">
+                <div class="remover">
+                  <div class="divider"></div>
+                  <button class="remover__x" data-remove-field="sl-existing"><span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span></button>
+                </div>
+                <div class="row">
+                  <div class="row__label body-large">Stoploss (SL)</div>
+                  <div class="field-col">
+                    <div class="oc-input" data-field="sl-existing" tabindex="0">
+                      <span class="oc-input__value body-large-heavy">490</span>
+                      <span class="oc-input__cursor"></span>
                     </div>
                   </div>
-                  <div class="est-pnl" data-pnl="sl-existing">
-                    <span class="est-pnl__label body-small">Est. loss</span>
-                    <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
-                    <button class="est-pnl__toggle" data-pnl-toggle="sl-existing"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
-                  </div>
                 </div>
+                <div class="est-pnl" data-pnl="sl-existing">
+                  <span class="est-pnl__label body-small">Est. loss</span>
+                  <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
+                  <button class="est-pnl__toggle" data-pnl-toggle="sl-existing"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                </div>
+              </div>
+            </div>
 
-                <div>
-                  <div class="remover">
-                    <div class="divider"></div>
-                    <button class="remover__x" data-remove="existing"><span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span></button>
-                  </div>
-                  <div class="row">
-                    <div class="row__label body-large">Target (TGT)</div>
-                    <div class="field-col">
-                      <div class="oc-input is-empty" data-field="tgt-existing" tabindex="0">
-                        <span class="oc-input__value body-large-heavy"></span>
-                        <span class="oc-input__cursor"></span>
-                      </div>
+            <div class="field-expander" id="expander-tgt-existing">
+              <div class="field-expander__inner">
+                <div class="remover">
+                  <div class="divider"></div>
+                  <button class="remover__x" data-remove-field="tgt-existing"><span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span></button>
+                </div>
+                <div class="row">
+                  <div class="row__label body-large">Target (TGT)</div>
+                  <div class="field-col">
+                    <div class="oc-input is-empty" data-field="tgt-existing" tabindex="0">
+                      <span class="oc-input__value body-large-heavy"></span>
+                      <span class="oc-input__cursor"></span>
                     </div>
                   </div>
-                  <div class="est-pnl" data-pnl="tgt-existing">
-                    <span class="est-pnl__label body-small">Est. profit</span>
-                    <span class="est-pnl__value body-small-heavy">--</span>
-                    <button class="est-pnl__toggle" data-pnl-toggle="tgt-existing"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
-                  </div>
                 </div>
-
+                <div class="est-pnl" data-pnl="tgt-existing">
+                  <span class="est-pnl__label body-small">Est. profit</span>
+                  <span class="est-pnl__value body-small-heavy">--</span>
+                  <button class="est-pnl__toggle" data-pnl-toggle="tgt-existing"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                </div>
               </div>
             </div>
           </div>
@@ -745,40 +746,40 @@
           <div class="add-sltgt-row">
             <button class="add-sltgt mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" id="addBtn-paired">
               <span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-add-01"></i></span>
-              Add SL/TGT
+              <span class="add-sltgt__text">Add SL/TGT</span>
             </button>
           </div>
-          <div class="expander" id="expander-paired">
-            <div class="expander__inner">
-              <div class="sltgt-section">
-                <div class="remover">
-                  <div class="divider"></div>
-                  <button class="remover__x" data-remove="paired"><span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span></button>
-                </div>
-                <div class="paired-row">
-                  <div class="paired-col">
-                    <span class="paired-label body-small-heavy">Stoploss (SL)</span>
-                    <div class="oc-input" data-field="sl-paired" tabindex="0">
-                      <span class="oc-input__value body-large-heavy">490</span>
-                      <span class="oc-input__cursor"></span>
-                    </div>
-                    <div class="est-pnl" data-pnl="sl-paired" style="justify-content:flex-start; padding:0;">
-                      <span class="est-pnl__label body-small">Est. loss</span>
-                      <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
-                      <button class="est-pnl__toggle" data-pnl-toggle="sl-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
-                    </div>
+          <div class="sltgt-section">
+            <div class="remover" id="remover-paired" style="display:none;">
+              <div class="divider"></div>
+              <button class="remover__x" data-remove-field="sl-paired" data-remove-also="tgt-paired"><span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span></button>
+            </div>
+            <div class="paired-row">
+              <div class="paired-col field-expander" id="expander-sl-paired">
+                <div class="field-expander__inner">
+                  <span class="paired-label body-small-heavy">Stoploss (SL)</span>
+                  <div class="oc-input" data-field="sl-paired" tabindex="0">
+                    <span class="oc-input__value body-large-heavy">490</span>
+                    <span class="oc-input__cursor"></span>
                   </div>
-                  <div class="paired-col">
-                    <span class="paired-label body-small-heavy">Target (TGT)</span>
-                    <div class="oc-input is-empty" data-field="tgt-paired" tabindex="0">
-                      <span class="oc-input__value body-large-heavy"></span>
-                      <span class="oc-input__cursor"></span>
-                    </div>
-                    <div class="est-pnl" data-pnl="tgt-paired" style="justify-content:flex-start; padding:0;">
-                      <span class="est-pnl__label body-small">Est. profit</span>
-                      <span class="est-pnl__value body-small-heavy">--</span>
-                      <button class="est-pnl__toggle" data-pnl-toggle="tgt-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
-                    </div>
+                  <div class="est-pnl" data-pnl="sl-paired" style="justify-content:flex-start; padding:0;">
+                    <span class="est-pnl__label body-small">Est. loss</span>
+                    <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
+                    <button class="est-pnl__toggle" data-pnl-toggle="sl-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="paired-col field-expander" id="expander-tgt-paired">
+                <div class="field-expander__inner">
+                  <span class="paired-label body-small-heavy">Target (TGT)</span>
+                  <div class="oc-input is-empty" data-field="tgt-paired" tabindex="0">
+                    <span class="oc-input__value body-large-heavy"></span>
+                    <span class="oc-input__cursor"></span>
+                  </div>
+                  <div class="est-pnl" data-pnl="tgt-paired" style="justify-content:flex-start; padding:0;">
+                    <span class="est-pnl__label body-small">Est. profit</span>
+                    <span class="est-pnl__value body-small-heavy">--</span>
+                    <button class="est-pnl__toggle" data-pnl-toggle="tgt-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                   </div>
                 </div>
               </div>
@@ -878,22 +879,46 @@
   });
 
   /* ---------- Add SL/TGT reveal (per-iteration) ---------- */
+  function updateAddBtnVisibility(iteration) {
+    const addBtn = document.getElementById('addBtn-' + iteration);
+    const slExp = document.getElementById('expander-sl-' + iteration);
+    const tgtExp = document.getElementById('expander-tgt-' + iteration);
+    if (!addBtn) return;
+    const slOpen = slExp && slExp.classList.contains('is-open');
+    const tgtOpen = tgtExp && tgtExp.classList.contains('is-open');
+    addBtn.style.display = (slOpen || tgtOpen) ? 'none' : '';
+  }
+
   ['existing', 'paired'].forEach(key => {
     const addBtn = document.getElementById('addBtn-' + key);
-    const expander = document.getElementById('expander-' + key);
     addBtn.addEventListener('click', () => {
-      expander.classList.add('is-open');
+      const slExp = document.getElementById('expander-sl-' + key);
+      const tgtExp = document.getElementById('expander-tgt-' + key);
+      if (slExp) slExp.classList.add('is-open');
+      if (tgtExp) tgtExp.classList.add('is-open');
+      const remover = document.getElementById('remover-' + key);
+      if (remover) remover.style.display = '';
       addBtn.style.display = 'none';
     });
   });
 
-  document.querySelectorAll('[data-remove]').forEach(btn => {
+  document.querySelectorAll('[data-remove-field]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const key = btn.dataset.remove;
-      const expander = document.getElementById('expander-' + key);
-      const addBtn = document.getElementById('addBtn-' + key);
-      expander.classList.remove('is-open');
-      setTimeout(() => { addBtn.style.display = ''; }, 280);
+      const fieldKey = btn.dataset.removeField;
+      const expander = document.getElementById('expander-' + fieldKey);
+      if (expander) expander.classList.remove('is-open');
+      const also = btn.dataset.removeAlso;
+      if (also) {
+        const alsoExp = document.getElementById('expander-' + also);
+        if (alsoExp) alsoExp.classList.remove('is-open');
+      }
+      const iteration = fieldKey.split('-').pop();
+      const removerRow = btn.closest('.remover');
+      if (removerRow) removerRow.style.display = 'none';
+      setTimeout(() => {
+        updateAddBtnVisibility(iteration);
+        if (removerRow) removerRow.style.display = '';
+      }, 200);
     });
   });
 
@@ -1025,7 +1050,7 @@
       labelEl.textContent = '';
       const sign = diffFromMkt >= 0 ? '+' : '';
       valueEl.textContent = sign + diffFromMkt.toFixed(2) + '% from market';
-      valueEl.classList.remove('is-loss', 'is-profit');
+      valueEl.className = 'est-pnl__value body-small';
     } else {
       const isLoss = pnlAbs < 0;
       const isProfit = pnlAbs > 0;
@@ -1033,7 +1058,7 @@
       const absPnl = Math.abs(Math.round(pnlAbs));
       const formatted = absPnl.toLocaleString('en-IN');
       valueEl.textContent = (pnlAbs < 0 ? '-' : '+') + '₹' + formatted;
-      valueEl.classList.remove('is-loss', 'is-profit');
+      valueEl.className = 'est-pnl__value body-small-heavy';
       if (isLoss) valueEl.classList.add('is-loss');
       else if (isProfit) valueEl.classList.add('is-profit');
     }
@@ -1046,9 +1071,9 @@
   }
 
   document.addEventListener('click', function(e) {
-    const toggleBtn = e.target.closest('[data-pnl-toggle]');
-    if (!toggleBtn) return;
-    const key = toggleBtn.getAttribute('data-pnl-toggle');
+    const row = e.target.closest('[data-pnl]');
+    if (!row) return;
+    const key = row.getAttribute('data-pnl');
     pnlViewMode[key] = pnlViewMode[key] === 'pct' ? 'pnl' : 'pct';
     updateEstPnl(key);
   });
