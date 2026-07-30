@@ -420,6 +420,7 @@
     position: relative;
     justify-content: flex-end;
     cursor: text;
+    outline: none;
     transition: border-color 150ms var(--ease-out), padding 150ms var(--ease-out), background 150ms var(--ease-out);
   }
   .oc-input.is-focus,
@@ -546,14 +547,13 @@
     transform: translateY(100%);
     transition: transform 320ms var(--ease-drawer);
     z-index: 60;
-    padding: 10px 10px calc(10px + env(safe-area-inset-bottom, 0px));
   }
   .numpad.is-open { transform: translateY(0); }
   .numpad__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 2px 6px 10px;
+    padding: 12px 16px 10px;
   }
   .numpad__label { color: var(--contentTertiary); }
   .numpad__done {
@@ -565,29 +565,36 @@
     transition: opacity 150ms var(--ease-out), transform 120ms var(--ease-out);
   }
   .numpad__done:active { transform: scale(0.94); }
-  .numpad__grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
+  .numpad__keys {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+  .numpad__row {
+    display: flex;
+    gap: 8px;
   }
   .numpad__key {
-    height: 48px;
-    border-radius: 10px;
+    flex: 1 0 0;
+    height: 56px;
+    border-radius: 12px;
     border: none;
-    background: var(--backgroundSurfaceZ2);
+    background: none;
     color: var(--contentPrimary);
-    font-family: 'GrowwSans', sans-serif;
+    font-family: 'Sohne', sans-serif;
     font-weight: 500;
-    font-size: 18px;
+    font-size: 24px;
+    line-height: 32px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: transform 120ms var(--ease-out), background 150ms var(--ease-out);
   }
-  .numpad__key:active { transform: scale(0.94); background: var(--backgroundSurfaceZ1); }
-  .numpad__key--ghost { background: transparent; cursor: default; }
-  .numpad__key--ghost:active { transform: none; }
+  .numpad__key:active { transform: scale(0.94); background: var(--backgroundSurfaceZ2); }
+  .numpad__key--ghost { cursor: default; }
+  .numpad__key--ghost:active { transform: none; background: none; }
 
 </style>
 </head>
@@ -780,26 +787,34 @@
       </div>
 
       <!-- Numpad -->
-      <div class="numpad" id="numpad">
+      <div class="numpad is-open" id="numpad">
         <div class="numpad__header">
           <span class="numpad__label body-small" id="numpadLabel">Price</span>
           <button class="numpad__done body-base-heavy" id="numpadDone">Done</button>
         </div>
-        <div class="numpad__grid">
-          <button class="numpad__key" data-digit="1">1</button>
-          <button class="numpad__key" data-digit="2">2</button>
-          <button class="numpad__key" data-digit="3">3</button>
-          <button class="numpad__key" data-digit="4">4</button>
-          <button class="numpad__key" data-digit="5">5</button>
-          <button class="numpad__key" data-digit="6">6</button>
-          <button class="numpad__key" data-digit="7">7</button>
-          <button class="numpad__key" data-digit="8">8</button>
-          <button class="numpad__key" data-digit="9">9</button>
-          <button class="numpad__key numpad__key--ghost"></button>
-          <button class="numpad__key" data-digit="0">0</button>
-          <button class="numpad__key" id="numpadBackspace">
-            <span class="mds-iconview mds-iconview--medium"><i class="gh-standard-arrow-left-01"></i></span>
-          </button>
+        <div class="numpad__keys">
+          <div class="numpad__row">
+            <button class="numpad__key" data-digit="1">1</button>
+            <button class="numpad__key" data-digit="2">2</button>
+            <button class="numpad__key" data-digit="3">3</button>
+          </div>
+          <div class="numpad__row">
+            <button class="numpad__key" data-digit="4">4</button>
+            <button class="numpad__key" data-digit="5">5</button>
+            <button class="numpad__key" data-digit="6">6</button>
+          </div>
+          <div class="numpad__row">
+            <button class="numpad__key" data-digit="7">7</button>
+            <button class="numpad__key" data-digit="8">8</button>
+            <button class="numpad__key" data-digit="9">9</button>
+          </div>
+          <div class="numpad__row">
+            <button class="numpad__key" data-digit=".">.</button>
+            <button class="numpad__key" data-digit="0">0</button>
+            <button class="numpad__key" id="numpadBackspace">
+              <span class="mds-iconview mds-iconview--large"><i class="gh-standard-delete-01"></i></span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -978,7 +993,7 @@
   function tickMarket() {
     const stepPct = (Math.random() - 0.5) * 0.006; // up to ±0.3%
     let next = LTP * (1 + stepPct);
-    next = Math.max(480, Math.min(520, next));
+    next = Math.max(500, Math.min(520, next));
     const wentUp = next >= LTP;
     LTP = next;
 
@@ -1024,7 +1039,12 @@
   }
 
   function openNumpad(key) {
+    document.querySelectorAll('.oc-input.is-focus, .oc-input.is-typing').forEach(el => {
+      el.classList.remove('is-focus', 'is-typing');
+    });
     activeField = key;
+    const field = document.querySelector('[data-field="' + key + '"]');
+    if (field) field.classList.add('is-focus', 'is-typing');
     numpadLabel.textContent = fieldLabels[key] || '';
     numpad.classList.add('is-open');
   }
@@ -1043,8 +1063,10 @@
   document.querySelectorAll('.numpad__key[data-digit]').forEach(key => {
     key.addEventListener('click', () => {
       if (!activeField) return;
+      const digit = key.dataset.digit;
       let current = currentValue(activeField);
-      if (current.length < 6) current += key.dataset.digit;
+      if (digit === '.' && current.includes('.')) return;
+      if (current.length < 6) current += digit;
       setValue(activeField, current);
     });
   });
@@ -1059,7 +1081,6 @@
     const key = field.dataset.field;
 
     field.addEventListener('click', () => {
-      field.classList.add('is-focus', 'is-typing');
       openNumpad(key);
     });
 
@@ -1088,6 +1109,7 @@
   /* initial validation + margin pass */
   revalidateAll();
   updateMargin();
+  openNumpad('price');
 })();
 </script>
 
