@@ -398,6 +398,14 @@
     padding: 0 16px;
     min-height: 48px;
   }
+  .row--align-input {
+    align-items: flex-start;
+  }
+  .row--align-input .row__label {
+    height: 48px;
+    display: flex;
+    align-items: center;
+  }
   .row__label { display: flex; align-items: center; gap: 4px; color: var(--contentPrimary); }
   .row__label .tag { color: var(--contentPrimary); font-weight: 500; }
   .row__label .chev { color: var(--contentSecondary); }
@@ -524,6 +532,7 @@
   }
   .field-expander.is-open { grid-template-rows: 1fr; }
   .field-expander__inner { overflow: hidden; min-height: 0; }
+  .paired-col .field-expander__inner { display: flex; flex-direction: column; gap: 6px; }
 
   /* input-corner X button (paired variant) */
   .input-wrap { position: relative; width: 100%; }
@@ -557,7 +566,7 @@
     gap: 16px;
     padding: 0 16px;
   }
-  .paired-col { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .paired-col { flex: 1; }
   .paired-col .oc-input { width: 100%; }
   .paired-label { color: var(--contentSecondary); }
 
@@ -806,37 +815,41 @@
           </div>
           <div class="sltgt-section">
             <div class="paired-row">
-              <div class="paired-col field-expander" id="expander-sl-paired">
-                <div class="field-expander__inner">
-                  <div class="paired-header">
-                    <span class="paired-label body-small-heavy">SL</span>
-                    <button class="inline-x inline-x--xsmall" data-remove-field="sl-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
-                  </div>
-                  <div class="oc-input" data-field="sl-paired" tabindex="0">
-                    <span class="oc-input__value body-large-heavy">490</span>
-                    <span class="oc-input__cursor"></span>
-                  </div>
-                  <div class="est-pnl" data-pnl="sl-paired" style="justify-content:flex-start; padding:0;">
-                    <span class="est-pnl__label body-small">Est. loss</span>
-                    <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
-                    <button class="est-pnl__toggle" data-pnl-toggle="sl-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+              <div class="paired-col">
+                <div class="field-expander" id="expander-sl-paired">
+                  <div class="field-expander__inner">
+                    <div class="paired-header">
+                      <span class="paired-label body-small-heavy">SL</span>
+                      <button class="inline-x inline-x--xsmall" data-remove-field="sl-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
+                    </div>
+                    <div class="oc-input" data-field="sl-paired" tabindex="0">
+                      <span class="oc-input__value body-large-heavy">490</span>
+                      <span class="oc-input__cursor"></span>
+                    </div>
+                    <div class="est-pnl" data-pnl="sl-paired" style="justify-content:flex-start; padding:0;">
+                      <span class="est-pnl__label body-small">Est. loss</span>
+                      <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
+                      <button class="est-pnl__toggle" data-pnl-toggle="sl-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="paired-col field-expander" id="expander-tgt-paired">
-                <div class="field-expander__inner">
-                  <div class="paired-header">
-                    <span class="paired-label body-small-heavy">TGT</span>
-                    <button class="inline-x inline-x--xsmall" data-remove-field="tgt-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
-                  </div>
-                  <div class="oc-input is-empty" data-field="tgt-paired" tabindex="0">
-                    <span class="oc-input__value body-large-heavy"></span>
-                    <span class="oc-input__cursor"></span>
-                  </div>
-                  <div class="est-pnl" data-pnl="tgt-paired" style="justify-content:flex-start; padding:0;">
-                    <span class="est-pnl__label body-small">Est. profit</span>
-                    <span class="est-pnl__value body-small-heavy">--</span>
-                    <button class="est-pnl__toggle" data-pnl-toggle="tgt-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+              <div class="paired-col">
+                <div class="field-expander" id="expander-tgt-paired">
+                  <div class="field-expander__inner">
+                    <div class="paired-header">
+                      <span class="paired-label body-small-heavy">TGT</span>
+                      <button class="inline-x inline-x--xsmall" data-remove-field="tgt-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
+                    </div>
+                    <div class="oc-input is-empty" data-field="tgt-paired" tabindex="0">
+                      <span class="oc-input__value body-large-heavy"></span>
+                      <span class="oc-input__cursor"></span>
+                    </div>
+                    <div class="est-pnl" data-pnl="tgt-paired" style="justify-content:flex-start; padding:0;">
+                      <span class="est-pnl__label body-small">Est. profit</span>
+                      <span class="est-pnl__value body-small-heavy">--</span>
+                      <button class="est-pnl__toggle" data-pnl-toggle="tgt-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -855,7 +868,7 @@
           <div class="sltgt-section">
             <div class="field-expander" id="expander-sl-inline">
               <div class="field-expander__inner">
-                <div class="row">
+                <div class="row row--align-input">
                   <div class="row__label body-large">Stoploss (SL)</div>
                   <div class="field-col">
                     <div class="inline-field-group">
@@ -879,7 +892,7 @@
 
             <div class="field-expander" id="expander-tgt-inline">
               <div class="field-expander__inner">
-                <div class="row">
+                <div class="row row--align-input">
                   <div class="row__label body-large">Target (TGT)</div>
                   <div class="field-col">
                     <div class="inline-field-group">
