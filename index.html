@@ -139,15 +139,15 @@
     background: var(--backgroundSurfaceZ1);
     border: 1px solid var(--borderPrimary);
     border-radius: 99px;
-    padding: 4px;
-    gap: 2px;
+    padding: 6px;
+    gap: 4px;
     isolation: isolate;
   }
   .segtabs__indicator {
     position: absolute;
-    top: 4px;
-    left: 4px;
-    height: calc(100% - 8px);
+    top: 6px;
+    left: 6px;
+    height: calc(100% - 12px);
     border-radius: 99px;
     background: var(--backgroundSurfaceZ2);
     border: 1px solid var(--borderNeutral);
@@ -162,7 +162,7 @@
     border: none;
     background: transparent;
     cursor: pointer;
-    padding: 9px 16px;
+    padding: 10px 20px;
     border-radius: 99px;
     color: var(--contentSecondary);
     transition: color 220ms var(--ease-out), transform 120ms var(--ease-out);
@@ -245,6 +245,7 @@
     color: var(--contentAccent);
     border: none;
   }
+  .mds-btn--tertiary.mds-btn--muted { color: var(--contentSecondary); }
   .mds-btn--tertiary:hover, .mds-btn--tertiary-accent:hover { opacity: 0.8; }
   .mds-btn--tertiary:disabled, .mds-btn--tertiary-accent:disabled {
     background: var(--backgroundDisabled);
@@ -760,7 +761,7 @@
         <div class="dock__balance">
           <span class="lbl body-small">Balance: ₹1,00,000</span>
           <div class="margin-group">
-            <button class="mds-btn mds-btn--tertiary-accent mds-btn--small mds-btn--compact body-small-heavy" id="marginBtn">Margin (5x)</button>
+            <button class="mds-btn mds-btn--tertiary mds-btn--muted mds-btn--small mds-btn--compact body-small-heavy" id="marginBtn">Margin (5x)</button>
             <span class="margin-value body-small" id="marginValue">₹0</span>
           </div>
         </div>
