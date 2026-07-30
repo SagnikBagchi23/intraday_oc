@@ -561,6 +561,36 @@
   .paired-col .oc-input { width: 100%; }
   .paired-label { color: var(--contentSecondary); }
 
+  /* Iteration 3 (I2): inline X beside input */
+  .inline-field-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .inline-x {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--contentTertiary);
+    background: none;
+    border: none;
+    border-radius: 99px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 120ms var(--ease-out), color 150ms var(--ease-out);
+  }
+  .inline-x:active { transform: scale(0.85); }
+  .inline-x:hover { color: var(--contentPrimary); }
+  .inline-x--xsmall { width: 12px; height: 12px; font-size: 12px; }
+
+  .paired-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   /* bottom dock */
   .dock { flex-shrink: 0; border-top: 1px solid var(--borderPrimary); }
   .dock__balance {
@@ -632,6 +662,7 @@
   <div class="segtabs__indicator" id="segtabsIndicator"></div>
   <button class="segtabs__btn heading-eyebrow" data-tab="existing" data-active="true">Existing</button>
   <button class="segtabs__btn heading-eyebrow" data-tab="paired">I1</button>
+  <button class="segtabs__btn heading-eyebrow" data-tab="inline">I2</button>
 </div>
 
 <!-- Phone frame (360x800) -->
@@ -776,13 +807,13 @@
             <div class="paired-row">
               <div class="paired-col field-expander" id="expander-sl-paired">
                 <div class="field-expander__inner">
-                  <span class="paired-label body-small-heavy">SL</span>
-                  <div class="input-wrap">
-                    <button class="input-x" data-remove-field="sl-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
-                    <div class="oc-input" data-field="sl-paired" tabindex="0">
-                      <span class="oc-input__value body-large-heavy">490</span>
-                      <span class="oc-input__cursor"></span>
-                    </div>
+                  <div class="paired-header">
+                    <span class="paired-label body-small-heavy">SL</span>
+                    <button class="inline-x inline-x--xsmall" data-remove-field="sl-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
+                  </div>
+                  <div class="oc-input" data-field="sl-paired" tabindex="0">
+                    <span class="oc-input__value body-large-heavy">490</span>
+                    <span class="oc-input__cursor"></span>
                   </div>
                   <div class="est-pnl" data-pnl="sl-paired" style="justify-content:flex-start; padding:0;">
                     <span class="est-pnl__label body-small">Est. loss</span>
@@ -793,19 +824,84 @@
               </div>
               <div class="paired-col field-expander" id="expander-tgt-paired">
                 <div class="field-expander__inner">
-                  <span class="paired-label body-small-heavy">TGT</span>
-                  <div class="input-wrap">
-                    <button class="input-x" data-remove-field="tgt-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
-                    <div class="oc-input is-empty" data-field="tgt-paired" tabindex="0">
-                      <span class="oc-input__value body-large-heavy"></span>
-                      <span class="oc-input__cursor"></span>
-                    </div>
+                  <div class="paired-header">
+                    <span class="paired-label body-small-heavy">TGT</span>
+                    <button class="inline-x inline-x--xsmall" data-remove-field="tgt-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
+                  </div>
+                  <div class="oc-input is-empty" data-field="tgt-paired" tabindex="0">
+                    <span class="oc-input__value body-large-heavy"></span>
+                    <span class="oc-input__cursor"></span>
                   </div>
                   <div class="est-pnl" data-pnl="tgt-paired" style="justify-content:flex-start; padding:0;">
                     <span class="est-pnl__label body-small">Est. profit</span>
                     <span class="est-pnl__value body-small-heavy">--</span>
                     <button class="est-pnl__toggle" data-pnl-toggle="tgt-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= ITERATION 3: I2 (inline X icon beside input) ================= -->
+        <div class="iteration-panel" data-panel="inline">
+          <div class="add-sltgt-row">
+            <button class="add-sltgt mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" id="addBtn-inline">
+              <span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-add-01"></i></span>
+              <span class="add-sltgt__text">Add SL/TGT</span>
+            </button>
+          </div>
+          <div class="sltgt-section">
+            <div class="field-expander" id="expander-sl-inline">
+              <div class="field-expander__inner">
+                <div class="remover">
+                  <div class="divider"></div>
+                </div>
+                <div class="row">
+                  <div class="row__label body-large">Stoploss (SL)</div>
+                  <div class="field-col">
+                    <div class="inline-field-group">
+                      <div class="oc-input" data-field="sl-inline" tabindex="0">
+                        <span class="oc-input__value body-large-heavy">490</span>
+                        <span class="oc-input__cursor"></span>
+                      </div>
+                      <button class="inline-x" data-remove-field="sl-inline">
+                        <span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="est-pnl" data-pnl="sl-inline">
+                  <span class="est-pnl__label body-small">Est. loss</span>
+                  <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
+                  <button class="est-pnl__toggle" data-pnl-toggle="sl-inline"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="field-expander" id="expander-tgt-inline">
+              <div class="field-expander__inner">
+                <div class="remover">
+                  <div class="divider"></div>
+                </div>
+                <div class="row">
+                  <div class="row__label body-large">Target (TGT)</div>
+                  <div class="field-col">
+                    <div class="inline-field-group">
+                      <div class="oc-input is-empty" data-field="tgt-inline" tabindex="0">
+                        <span class="oc-input__value body-large-heavy"></span>
+                        <span class="oc-input__cursor"></span>
+                      </div>
+                      <button class="inline-x" data-remove-field="tgt-inline">
+                        <span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="est-pnl" data-pnl="tgt-inline">
+                  <span class="est-pnl__label body-small">Est. profit</span>
+                  <span class="est-pnl__value body-small-heavy">--</span>
+                  <button class="est-pnl__toggle" data-pnl-toggle="tgt-inline"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                 </div>
               </div>
             </div>
@@ -914,7 +1010,7 @@
     addBtn.style.display = (slOpen || tgtOpen) ? 'none' : '';
   }
 
-  ['existing', 'paired'].forEach(key => {
+  ['existing', 'paired', 'inline'].forEach(key => {
     const addBtn = document.getElementById('addBtn-' + key);
     addBtn.addEventListener('click', () => {
       const slExp = document.getElementById('expander-sl-' + key);
@@ -922,10 +1018,10 @@
       if (slExp) slExp.classList.add('is-open');
       if (tgtExp) tgtExp.classList.add('is-open');
       addBtn.style.display = 'none';
-      const sltgtSection = addBtn.closest('.iteration-panel').querySelector('.sltgt-section');
-      if (sltgtSection) {
+      const screenBody = addBtn.closest('.screen-body');
+      if (screenBody) {
         setTimeout(() => {
-          sltgtSection.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          screenBody.scrollTo({ top: screenBody.scrollHeight, behavior: 'smooth' });
         }, 220);
       }
     });
@@ -978,7 +1074,9 @@
     'sl-existing': '490',
     'tgt-existing': '',
     'sl-paired': '490',
-    'tgt-paired': ''
+    'tgt-paired': '',
+    'sl-inline': '490',
+    'tgt-inline': ''
   };
 
   function validateAndRender(fieldKey, kind, rawVal) {
@@ -1010,6 +1108,8 @@
     validateAndRender('tgt-existing', 'tgt', fieldValues['tgt-existing']);
     validateAndRender('sl-paired', 'sl', fieldValues['sl-paired']);
     validateAndRender('tgt-paired', 'tgt', fieldValues['tgt-paired']);
+    validateAndRender('sl-inline', 'sl', fieldValues['sl-inline']);
+    validateAndRender('tgt-inline', 'tgt', fieldValues['tgt-inline']);
     updateAllPnl();
     updateCtaState();
   }
@@ -1097,7 +1197,7 @@
   }
 
   function updateAllPnl() {
-    ['sl-existing', 'tgt-existing', 'sl-paired', 'tgt-paired'].forEach(updateEstPnl);
+    ['sl-existing', 'tgt-existing', 'sl-paired', 'tgt-paired', 'sl-inline', 'tgt-inline'].forEach(updateEstPnl);
   }
 
   document.addEventListener('click', function(e) {
