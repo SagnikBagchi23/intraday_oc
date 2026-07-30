@@ -353,7 +353,6 @@
     display: flex;
     align-items: center;
     padding: 4px 8px;
-    background: var(--backgroundSurfaceZ1);
   }
   .appbar__icon-btn {
     width: 40px; height: 40px;
@@ -705,7 +704,6 @@
                         <span class="oc-input__value body-large-heavy">490</span>
                         <span class="oc-input__cursor"></span>
                       </div>
-                      <div class="helper-text body-small" data-helper="sl-existing">-2.00% from market</div>
                     </div>
                   </div>
                   <div class="est-pnl" data-pnl="sl-existing">
@@ -727,7 +725,6 @@
                         <span class="oc-input__value body-large-heavy"></span>
                         <span class="oc-input__cursor"></span>
                       </div>
-                      <div class="helper-text body-small" data-helper="tgt-existing">&nbsp;</div>
                     </div>
                   </div>
                   <div class="est-pnl" data-pnl="tgt-existing">
@@ -764,7 +761,6 @@
                       <span class="oc-input__value body-large-heavy">490</span>
                       <span class="oc-input__cursor"></span>
                     </div>
-                    <span class="helper-text body-small" data-helper="sl-paired" style="text-align:left;">-2.00% from market</span>
                     <div class="est-pnl" data-pnl="sl-paired" style="justify-content:flex-start; padding:0;">
                       <span class="est-pnl__label body-small">Est. loss</span>
                       <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
@@ -777,7 +773,6 @@
                       <span class="oc-input__value body-large-heavy"></span>
                       <span class="oc-input__cursor"></span>
                     </div>
-                    <span class="helper-text body-small" data-helper="tgt-paired" style="text-align:left;">&nbsp;</span>
                     <div class="est-pnl" data-pnl="tgt-paired" style="justify-content:flex-start; padding:0;">
                       <span class="est-pnl__label body-small">Est. profit</span>
                       <span class="est-pnl__value body-small-heavy">--</span>
@@ -933,52 +928,16 @@
   function validateAndRender(fieldKey, kind, rawVal) {
     const helper = document.querySelector('[data-helper="' + fieldKey + '"]');
     const inputEl = document.querySelector('[data-field="' + fieldKey + '"]');
-    if (!helper || !inputEl) return;
-    const val = parseFloat(rawVal);
+    if (!inputEl) return;
 
     inputEl.classList.remove('is-warning', 'is-error');
 
-    if (kind === 'price') {
+    if (kind === 'price' && helper) {
+      const val = parseFloat(rawVal);
       if (isNaN(val) || rawVal === '') { helper.textContent = ' '; helper.className = 'helper-text body-small'; return; }
       const diff = ((val - LTP) / LTP) * 100;
       helper.textContent = (diff >= 0 ? '+' : '') + diff.toFixed(2) + '% from market';
       helper.className = 'helper-text body-small';
-      return;
-    }
-
-    if (kind === 'sl') {
-      if (isNaN(val) || rawVal === '') { helper.textContent = ' '; helper.className = 'helper-text body-small'; return; }
-      const diff = ((val - LTP) / LTP) * 100;
-      if (val >= LTP) {
-        helper.textContent = 'Stoploss must be below LTP (₹' + LTP.toFixed(2) + ')';
-        helper.className = 'helper-text body-small error';
-        inputEl.classList.add('is-error');
-      } else if (Math.abs(diff) < 0.5) {
-        helper.textContent = 'Very close to LTP — may trigger instantly';
-        helper.className = 'helper-text body-small warning';
-        inputEl.classList.add('is-warning');
-      } else {
-        helper.textContent = diff.toFixed(2) + '% from market';
-        helper.className = 'helper-text body-small';
-      }
-      return;
-    }
-
-    if (kind === 'tgt') {
-      if (isNaN(val) || rawVal === '') { helper.textContent = ' '; helper.className = 'helper-text body-small'; return; }
-      const diff = ((val - LTP) / LTP) * 100;
-      if (val <= LTP) {
-        helper.textContent = 'Target must be above LTP (₹' + LTP.toFixed(2) + ')';
-        helper.className = 'helper-text body-small error';
-        inputEl.classList.add('is-error');
-      } else if (Math.abs(diff) < 0.5) {
-        helper.textContent = 'Very close to LTP — may trigger instantly';
-        helper.className = 'helper-text body-small warning';
-        inputEl.classList.add('is-warning');
-      } else {
-        helper.textContent = '+' + diff.toFixed(2) + '% from market';
-        helper.className = 'helper-text body-small';
-      }
     }
   }
 
@@ -1012,13 +971,17 @@
     if (!pnlEl) return;
 
     const kind = fieldKey.startsWith('sl') ? 'sl' : 'tgt';
+    const inputEl = document.querySelector('[data-field="' + fieldKey + '"]');
     const val = parseFloat(fieldValues[fieldKey]);
     const qty = parseFloat(fieldValues.qty) || 0;
     const price = parseFloat(fieldValues.price) || LTP;
 
+    const labelEl = pnlEl.querySelector('.est-pnl__label');
+    const valueEl = pnlEl.querySelector('.est-pnl__value');
+
+    if (inputEl) inputEl.classList.remove('is-warning', 'is-error');
+
     if (isNaN(val) || val === 0 || qty === 0) {
-      const labelEl = pnlEl.querySelector('.est-pnl__label');
-      const valueEl = pnlEl.querySelector('.est-pnl__value');
       labelEl.textContent = kind === 'sl' ? 'Est. loss' : 'Est. profit';
       valueEl.textContent = '--';
       valueEl.classList.remove('is-loss', 'is-profit');
@@ -1026,36 +989,53 @@
       return;
     }
 
+    if (kind === 'sl' && val >= LTP && inputEl) {
+      labelEl.textContent = '';
+      valueEl.textContent = 'Stoploss must be below LTP (₹' + LTP.toFixed(2) + ')';
+      valueEl.classList.remove('is-loss', 'is-profit');
+      valueEl.classList.add('is-loss');
+      inputEl.classList.add('is-error');
+      pnlEl.style.display = '';
+      return;
+    }
+
+    if (kind === 'tgt' && val <= LTP && inputEl) {
+      labelEl.textContent = '';
+      valueEl.textContent = 'Target must be above LTP (₹' + LTP.toFixed(2) + ')';
+      valueEl.classList.remove('is-loss', 'is-profit');
+      valueEl.classList.add('is-loss');
+      inputEl.classList.add('is-error');
+      pnlEl.style.display = '';
+      return;
+    }
+
+    const diffFromMkt = ((val - LTP) / LTP) * 100;
+    if (Math.abs(diffFromMkt) < 0.5 && inputEl) {
+      inputEl.classList.add('is-warning');
+    }
+
     const diff = val - price;
     const pnlAbs = diff * qty;
     const pnlPct = price > 0 ? (diff / price) * 100 : 0;
 
-    const isSl = kind === 'sl';
-    const isLoss = isSl ? pnlAbs < 0 : pnlAbs <= 0;
-    const isProfit = !isLoss && pnlAbs !== 0;
+    const mode = pnlViewMode[fieldKey] || 'pnl';
 
-    const labelEl = pnlEl.querySelector('.est-pnl__label');
-    const valueEl = pnlEl.querySelector('.est-pnl__value');
-
-    if (isSl) {
-      labelEl.textContent = pnlAbs < 0 ? 'Est. loss' : pnlAbs > 0 ? 'Est. profit' : 'Est. P&L';
-    } else {
-      labelEl.textContent = pnlAbs > 0 ? 'Est. profit' : pnlAbs < 0 ? 'Est. loss' : 'Est. P&L';
-    }
-
-    const mode = pnlViewMode[fieldKey] || 'abs';
     if (mode === 'pct') {
-      const sign = pnlPct >= 0 ? '+' : '';
-      valueEl.textContent = sign + pnlPct.toFixed(2) + '%';
+      labelEl.textContent = '';
+      const sign = diffFromMkt >= 0 ? '+' : '';
+      valueEl.textContent = sign + diffFromMkt.toFixed(2) + '% from market';
+      valueEl.classList.remove('is-loss', 'is-profit');
     } else {
+      const isLoss = pnlAbs < 0;
+      const isProfit = pnlAbs > 0;
+      labelEl.textContent = isLoss ? 'Est. loss' : isProfit ? 'Est. profit' : 'Est. P&L';
       const absPnl = Math.abs(Math.round(pnlAbs));
       const formatted = absPnl.toLocaleString('en-IN');
       valueEl.textContent = (pnlAbs < 0 ? '-' : '+') + '₹' + formatted;
+      valueEl.classList.remove('is-loss', 'is-profit');
+      if (isLoss) valueEl.classList.add('is-loss');
+      else if (isProfit) valueEl.classList.add('is-profit');
     }
-
-    valueEl.classList.remove('is-loss', 'is-profit');
-    if (isLoss) valueEl.classList.add('is-loss');
-    else if (isProfit) valueEl.classList.add('is-profit');
 
     pnlEl.style.display = '';
   }
@@ -1068,7 +1048,7 @@
     const toggleBtn = e.target.closest('[data-pnl-toggle]');
     if (!toggleBtn) return;
     const key = toggleBtn.getAttribute('data-pnl-toggle');
-    pnlViewMode[key] = pnlViewMode[key] === 'pct' ? 'abs' : 'pct';
+    pnlViewMode[key] = pnlViewMode[key] === 'pct' ? 'pnl' : 'pct';
     updateEstPnl(key);
   });
 
