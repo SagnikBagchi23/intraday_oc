@@ -554,7 +554,7 @@
   /* Iteration 2: paired row */
   .paired-row {
     display: flex;
-    gap: 8px;
+    gap: 16px;
     padding: 0 16px;
   }
   .paired-col { flex: 1; display: flex; flex-direction: column; gap: 6px; }
@@ -588,7 +588,7 @@
   .paired-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 4px;
   }
 
   /* bottom dock */
@@ -867,7 +867,7 @@
                         <span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span>
                       </button>
                     </div>
-                    <div class="est-pnl" data-pnl="sl-inline" style="padding:0;">
+                    <div class="est-pnl" data-pnl="sl-inline" style="padding:0; margin-right:30px;">
                       <span class="est-pnl__label body-small">Est. loss</span>
                       <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
                       <button class="est-pnl__toggle" data-pnl-toggle="sl-inline"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
@@ -891,7 +891,7 @@
                         <span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span>
                       </button>
                     </div>
-                    <div class="est-pnl" data-pnl="tgt-inline" style="padding:0;">
+                    <div class="est-pnl" data-pnl="tgt-inline" style="padding:0; margin-right:30px;">
                       <span class="est-pnl__label body-small">Est. profit</span>
                       <span class="est-pnl__value body-small-heavy">--</span>
                       <button class="est-pnl__toggle" data-pnl-toggle="tgt-inline"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
@@ -914,9 +914,6 @@
           <div class="sltgt-section">
             <div class="field-expander" id="expander-sl-nodismiss">
               <div class="field-expander__inner">
-                <div class="remover">
-                  <div class="divider"></div>
-                </div>
                 <div class="row">
                   <div class="row__label body-large">Stoploss (SL)</div>
                   <div class="field-col">
@@ -936,9 +933,6 @@
 
             <div class="field-expander" id="expander-tgt-nodismiss">
               <div class="field-expander__inner">
-                <div class="remover">
-                  <div class="divider"></div>
-                </div>
                 <div class="row">
                   <div class="row__label body-large">Target (TGT)</div>
                   <div class="field-col">
