@@ -525,6 +525,29 @@
   .field-expander.is-open { grid-template-rows: 1fr; }
   .field-expander__inner { overflow: hidden; min-height: 0; }
 
+  /* input-corner X button (paired variant) */
+  .input-wrap { position: relative; width: 100%; }
+  .input-x {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    z-index: 1;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--backgroundPrimary);
+    color: var(--contentSecondary);
+    border: none;
+    border-radius: 99px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: transform 120ms var(--ease-out), color 150ms var(--ease-out);
+  }
+  .input-x:active { transform: scale(0.85); }
+  .input-x:hover { color: var(--contentPrimary); }
+
   /* ---- Iteration content sections ---- */
   .sltgt-section { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
 
@@ -750,17 +773,16 @@
             </button>
           </div>
           <div class="sltgt-section">
-            <div class="remover" id="remover-paired" style="display:none;">
-              <div class="divider"></div>
-              <button class="remover__x" data-remove-field="sl-paired" data-remove-also="tgt-paired"><span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span></button>
-            </div>
             <div class="paired-row">
               <div class="paired-col field-expander" id="expander-sl-paired">
                 <div class="field-expander__inner">
-                  <span class="paired-label body-small-heavy">Stoploss (SL)</span>
-                  <div class="oc-input" data-field="sl-paired" tabindex="0">
-                    <span class="oc-input__value body-large-heavy">490</span>
-                    <span class="oc-input__cursor"></span>
+                  <span class="paired-label body-small-heavy">SL</span>
+                  <div class="input-wrap">
+                    <button class="input-x" data-remove-field="sl-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
+                    <div class="oc-input" data-field="sl-paired" tabindex="0">
+                      <span class="oc-input__value body-large-heavy">490</span>
+                      <span class="oc-input__cursor"></span>
+                    </div>
                   </div>
                   <div class="est-pnl" data-pnl="sl-paired" style="justify-content:flex-start; padding:0;">
                     <span class="est-pnl__label body-small">Est. loss</span>
@@ -771,10 +793,13 @@
               </div>
               <div class="paired-col field-expander" id="expander-tgt-paired">
                 <div class="field-expander__inner">
-                  <span class="paired-label body-small-heavy">Target (TGT)</span>
-                  <div class="oc-input is-empty" data-field="tgt-paired" tabindex="0">
-                    <span class="oc-input__value body-large-heavy"></span>
-                    <span class="oc-input__cursor"></span>
+                  <span class="paired-label body-small-heavy">TGT</span>
+                  <div class="input-wrap">
+                    <button class="input-x" data-remove-field="tgt-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
+                    <div class="oc-input is-empty" data-field="tgt-paired" tabindex="0">
+                      <span class="oc-input__value body-large-heavy"></span>
+                      <span class="oc-input__cursor"></span>
+                    </div>
                   </div>
                   <div class="est-pnl" data-pnl="tgt-paired" style="justify-content:flex-start; padding:0;">
                     <span class="est-pnl__label body-small">Est. profit</span>
@@ -896,14 +921,19 @@
       const tgtExp = document.getElementById('expander-tgt-' + key);
       if (slExp) slExp.classList.add('is-open');
       if (tgtExp) tgtExp.classList.add('is-open');
-      const remover = document.getElementById('remover-' + key);
-      if (remover) remover.style.display = '';
       addBtn.style.display = 'none';
+      const sltgtSection = addBtn.closest('.iteration-panel').querySelector('.sltgt-section');
+      if (sltgtSection) {
+        setTimeout(() => {
+          sltgtSection.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }, 220);
+      }
     });
   });
 
   document.querySelectorAll('[data-remove-field]').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const fieldKey = btn.dataset.removeField;
       const expander = document.getElementById('expander-' + fieldKey);
       if (expander) expander.classList.remove('is-open');
