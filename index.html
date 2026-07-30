@@ -375,7 +375,7 @@
   .screen-body {
     flex: 1;
     overflow-y: auto;
-    padding: 12px 0 8px;
+    padding: 12px 0 16px;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
@@ -854,9 +854,6 @@
           <div class="sltgt-section">
             <div class="field-expander" id="expander-sl-inline">
               <div class="field-expander__inner">
-                <div class="remover">
-                  <div class="divider"></div>
-                </div>
                 <div class="row">
                   <div class="row__label body-large">Stoploss (SL)</div>
                   <div class="field-col">
@@ -869,21 +866,18 @@
                         <span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span>
                       </button>
                     </div>
+                    <div class="est-pnl" data-pnl="sl-inline" style="padding:0;">
+                      <span class="est-pnl__label body-small">Est. loss</span>
+                      <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
+                      <button class="est-pnl__toggle" data-pnl-toggle="sl-inline"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                    </div>
                   </div>
-                </div>
-                <div class="est-pnl" data-pnl="sl-inline">
-                  <span class="est-pnl__label body-small">Est. loss</span>
-                  <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
-                  <button class="est-pnl__toggle" data-pnl-toggle="sl-inline"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                 </div>
               </div>
             </div>
 
             <div class="field-expander" id="expander-tgt-inline">
               <div class="field-expander__inner">
-                <div class="remover">
-                  <div class="divider"></div>
-                </div>
                 <div class="row">
                   <div class="row__label body-large">Target (TGT)</div>
                   <div class="field-col">
@@ -896,12 +890,12 @@
                         <span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span>
                       </button>
                     </div>
+                    <div class="est-pnl" data-pnl="tgt-inline" style="padding:0;">
+                      <span class="est-pnl__label body-small">Est. profit</span>
+                      <span class="est-pnl__value body-small-heavy">--</span>
+                      <button class="est-pnl__toggle" data-pnl-toggle="tgt-inline"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                    </div>
                   </div>
-                </div>
-                <div class="est-pnl" data-pnl="tgt-inline">
-                  <span class="est-pnl__label body-small">Est. profit</span>
-                  <span class="est-pnl__value body-small-heavy">--</span>
-                  <button class="est-pnl__toggle" data-pnl-toggle="tgt-inline"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                 </div>
               </div>
             </div>
