@@ -729,9 +729,9 @@
                       <div class="helper-text body-small" data-helper="tgt-existing">&nbsp;</div>
                     </div>
                   </div>
-                  <div class="est-pnl" data-pnl="tgt-existing" style="display:none;">
+                  <div class="est-pnl" data-pnl="tgt-existing">
                     <span class="est-pnl__label body-small">Est. profit</span>
-                    <span class="est-pnl__value body-small-heavy is-profit">+₹0</span>
+                    <span class="est-pnl__value body-small-heavy">--</span>
                     <button class="est-pnl__toggle" data-pnl-toggle="tgt-existing"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                   </div>
                 </div>
@@ -777,9 +777,9 @@
                       <span class="oc-input__cursor"></span>
                     </div>
                     <span class="helper-text body-small" data-helper="tgt-paired" style="text-align:left;">&nbsp;</span>
-                    <div class="est-pnl" data-pnl="tgt-paired" style="display:none; justify-content:flex-start; padding:0;">
+                    <div class="est-pnl" data-pnl="tgt-paired" style="justify-content:flex-start; padding:0;">
                       <span class="est-pnl__label body-small">Est. profit</span>
-                      <span class="est-pnl__value body-small-heavy is-profit">+₹0</span>
+                      <span class="est-pnl__value body-small-heavy">--</span>
                       <button class="est-pnl__toggle" data-pnl-toggle="tgt-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                     </div>
                   </div>
@@ -1016,7 +1016,12 @@
     const price = parseFloat(fieldValues.price) || LTP;
 
     if (isNaN(val) || val === 0 || qty === 0) {
-      pnlEl.style.display = 'none';
+      const labelEl = pnlEl.querySelector('.est-pnl__label');
+      const valueEl = pnlEl.querySelector('.est-pnl__value');
+      labelEl.textContent = kind === 'sl' ? 'Est. loss' : 'Est. profit';
+      valueEl.textContent = '--';
+      valueEl.classList.remove('is-loss', 'is-profit');
+      pnlEl.style.display = '';
       return;
     }
 
