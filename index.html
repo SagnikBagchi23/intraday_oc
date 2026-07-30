@@ -407,6 +407,27 @@
   .helper-text.warning { color: var(--contentWarning); }
   .helper-text.error   { color: var(--contentNegative); }
 
+  /* est. P&L row below SL/TGT fields */
+  .est-pnl {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    padding: 0 16px;
+  }
+  .est-pnl__label { color: var(--contentSecondary); }
+  .est-pnl__value { color: var(--contentSecondary); }
+  .est-pnl__value.is-loss { color: var(--contentNegative); }
+  .est-pnl__value.is-profit { color: var(--contentPositive); }
+  .est-pnl__toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 12px; height: 12px; font-size: 12px;
+    color: var(--contentSecondary); cursor: pointer;
+    background: none; border: none; padding: 0;
+    transition: color 150ms var(--ease-out);
+  }
+  .est-pnl__toggle:hover { color: var(--contentPrimary); }
+
   /* ---- oc-input-field ---- */
   .oc-input {
     display: inline-flex;
@@ -686,6 +707,11 @@
                       <div class="helper-text body-small" data-helper="sl-existing">-2.00% from market</div>
                     </div>
                   </div>
+                  <div class="est-pnl" data-pnl="sl-existing">
+                    <span class="est-pnl__label body-small">Est. loss</span>
+                    <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
+                    <button class="est-pnl__toggle" data-pnl-toggle="sl-existing"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                  </div>
                 </div>
 
                 <div>
@@ -702,6 +728,11 @@
                       </div>
                       <div class="helper-text body-small" data-helper="tgt-existing">&nbsp;</div>
                     </div>
+                  </div>
+                  <div class="est-pnl" data-pnl="tgt-existing" style="display:none;">
+                    <span class="est-pnl__label body-small">Est. profit</span>
+                    <span class="est-pnl__value body-small-heavy is-profit">+₹0</span>
+                    <button class="est-pnl__toggle" data-pnl-toggle="tgt-existing"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                   </div>
                 </div>
 
@@ -733,6 +764,11 @@
                       <span class="oc-input__cursor"></span>
                     </div>
                     <span class="helper-text body-small" data-helper="sl-paired" style="text-align:left;">-2.00% from market</span>
+                    <div class="est-pnl" data-pnl="sl-paired" style="justify-content:flex-start; padding:0;">
+                      <span class="est-pnl__label body-small">Est. loss</span>
+                      <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
+                      <button class="est-pnl__toggle" data-pnl-toggle="sl-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                    </div>
                   </div>
                   <div class="paired-col">
                     <span class="paired-label body-small-heavy">Target (TGT)</span>
@@ -741,6 +777,11 @@
                       <span class="oc-input__cursor"></span>
                     </div>
                     <span class="helper-text body-small" data-helper="tgt-paired" style="text-align:left;">&nbsp;</span>
+                    <div class="est-pnl" data-pnl="tgt-paired" style="display:none; justify-content:flex-start; padding:0;">
+                      <span class="est-pnl__label body-small">Est. profit</span>
+                      <span class="est-pnl__value body-small-heavy is-profit">+₹0</span>
+                      <button class="est-pnl__toggle" data-pnl-toggle="tgt-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -953,6 +994,7 @@
     validateAndRender('tgt-existing', 'tgt', fieldValues['tgt-existing']);
     validateAndRender('sl-paired', 'sl', fieldValues['sl-paired']);
     validateAndRender('tgt-paired', 'tgt', fieldValues['tgt-paired']);
+    updateAllPnl();
     updateCtaState();
   }
 
@@ -960,6 +1002,69 @@
     const anyError = Array.from(document.querySelectorAll('.oc-input.is-error')).length > 0;
     document.getElementById('ctaBuy').disabled = anyError;
   }
+
+  /* ---------- Est. P&L below SL/TGT ---------- */
+  const pnlViewMode = {};
+
+  function updateEstPnl(fieldKey) {
+    const pnlEl = document.querySelector('[data-pnl="' + fieldKey + '"]');
+    if (!pnlEl) return;
+
+    const kind = fieldKey.startsWith('sl') ? 'sl' : 'tgt';
+    const val = parseFloat(fieldValues[fieldKey]);
+    const qty = parseFloat(fieldValues.qty) || 0;
+    const price = parseFloat(fieldValues.price) || LTP;
+
+    if (isNaN(val) || val === 0 || qty === 0) {
+      pnlEl.style.display = 'none';
+      return;
+    }
+
+    const diff = val - price;
+    const pnlAbs = diff * qty;
+    const pnlPct = price > 0 ? (diff / price) * 100 : 0;
+
+    const isSl = kind === 'sl';
+    const isLoss = isSl ? pnlAbs < 0 : pnlAbs <= 0;
+    const isProfit = !isLoss && pnlAbs !== 0;
+
+    const labelEl = pnlEl.querySelector('.est-pnl__label');
+    const valueEl = pnlEl.querySelector('.est-pnl__value');
+
+    if (isSl) {
+      labelEl.textContent = pnlAbs < 0 ? 'Est. loss' : pnlAbs > 0 ? 'Est. profit' : 'Est. P&L';
+    } else {
+      labelEl.textContent = pnlAbs > 0 ? 'Est. profit' : pnlAbs < 0 ? 'Est. loss' : 'Est. P&L';
+    }
+
+    const mode = pnlViewMode[fieldKey] || 'abs';
+    if (mode === 'pct') {
+      const sign = pnlPct >= 0 ? '+' : '';
+      valueEl.textContent = sign + pnlPct.toFixed(2) + '%';
+    } else {
+      const absPnl = Math.abs(Math.round(pnlAbs));
+      const formatted = absPnl.toLocaleString('en-IN');
+      valueEl.textContent = (pnlAbs < 0 ? '-' : '+') + '₹' + formatted;
+    }
+
+    valueEl.classList.remove('is-loss', 'is-profit');
+    if (isLoss) valueEl.classList.add('is-loss');
+    else if (isProfit) valueEl.classList.add('is-profit');
+
+    pnlEl.style.display = '';
+  }
+
+  function updateAllPnl() {
+    ['sl-existing', 'tgt-existing', 'sl-paired', 'tgt-paired'].forEach(updateEstPnl);
+  }
+
+  document.addEventListener('click', function(e) {
+    const toggleBtn = e.target.closest('[data-pnl-toggle]');
+    if (!toggleBtn) return;
+    const key = toggleBtn.getAttribute('data-pnl-toggle');
+    pnlViewMode[key] = pnlViewMode[key] === 'pct' ? 'abs' : 'pct';
+    updateEstPnl(key);
+  });
 
   /* ---------- Live market ticking ---------- */
   const ltpDisplay = document.getElementById('ltpDisplay');
@@ -998,6 +1103,7 @@
     valueSpan.textContent = val;
     field.classList.toggle('is-empty', !val);
     validateAndRender(key, fieldKind(key), val);
+    updateAllPnl();
     updateCtaState();
     if (key === 'qty' || key === 'price') updateMargin();
   }
