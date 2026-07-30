@@ -477,11 +477,14 @@
   .remover__x:active { transform: scale(0.85); }
   .remover__x:hover { color: var(--contentPrimary); }
 
-  /* add SL/TGT trigger button (Tertiary Medium, flex full-width) */
+  /* add SL/TGT trigger button (Tertiary Medium, hug content, right-aligned) */
+  .add-sltgt-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 16px 4px;
+  }
   .add-sltgt {
-    margin: 12px 16px 4px;
-    width: calc(100% - 32px);
-    justify-content: center;
+    margin: 0;
   }
 
   /* expand/collapse wrapper using grid-template-rows trick */
@@ -672,10 +675,12 @@
 
         <!-- ================= ITERATION 1: EXISTING (crosshair, stacked full rows) ================= -->
         <div class="iteration-panel is-active" data-panel="existing">
-          <button class="add-sltgt mds-btn mds-btn--tertiary mds-btn--medium body-base-heavy" id="addBtn-existing">
-            <span class="mds-iconview mds-iconview--small"><i class="gh-standard-add-01"></i></span>
-            Add SL/TGT
-          </button>
+          <div class="add-sltgt-row">
+            <button class="add-sltgt mds-btn mds-btn--tertiary mds-btn--medium body-base-heavy" id="addBtn-existing">
+              <span class="mds-iconview mds-iconview--small"><i class="gh-standard-add-01"></i></span>
+              Add SL/TGT
+            </button>
+          </div>
           <div class="expander" id="expander-existing">
             <div class="expander__inner">
               <div class="sltgt-section">
@@ -721,10 +726,12 @@
 
         <!-- ================= ITERATION 2: PAIRED ROW (SL + TGT side by side, one row) ================= -->
         <div class="iteration-panel" data-panel="paired">
-          <button class="add-sltgt mds-btn mds-btn--tertiary mds-btn--medium body-base-heavy" id="addBtn-paired">
-            <span class="mds-iconview mds-iconview--small"><i class="gh-standard-add-01"></i></span>
-            Add SL/TGT
-          </button>
+          <div class="add-sltgt-row">
+            <button class="add-sltgt mds-btn mds-btn--tertiary mds-btn--medium body-base-heavy" id="addBtn-paired">
+              <span class="mds-iconview mds-iconview--small"><i class="gh-standard-add-01"></i></span>
+              Add SL/TGT
+            </button>
+          </div>
           <div class="expander" id="expander-paired">
             <div class="expander__inner">
               <div class="sltgt-section">
