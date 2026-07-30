@@ -149,7 +149,8 @@
     left: 4px;
     height: calc(100% - 8px);
     border-radius: 99px;
-    background: var(--backgroundAccent);
+    background: var(--backgroundSurfaceZ2);
+    border: 1px solid var(--borderNeutral);
     z-index: 0;
     transition: transform 260ms var(--ease-out), width 260ms var(--ease-out);
     will-change: transform, width;
@@ -168,7 +169,7 @@
     white-space: nowrap;
   }
   .segtabs__btn:active { transform: scale(0.96); }
-  .segtabs__btn[data-active="true"] { color: #04140F; }
+  .segtabs__btn[data-active="true"] { color: var(--contentPrimary); }
 
   /* ============ BUTTON COMPONENT (mds-btn) ============ */
   .mds-btn {
@@ -272,9 +273,10 @@
   }
   .mds-pill:active { transform: scale(0.97); }
   .mds-pill[data-selected="true"] {
-    background: var(--backgroundTertiary);
+    background: var(--backgroundPrimary);
     border-color: var(--borderNeutral);
     border-width: 1.5px;
+    color: var(--contentPrimary);
   }
 
   /* ============ PHONE FRAME (360x800, minimal bezel) ============ */
@@ -502,57 +504,6 @@
   .paired-col .oc-input { width: 100%; }
   .paired-label { color: var(--contentSecondary); }
 
-  /* Iteration 3: quick switch */
-  .qs-wrap { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
-  .qs-tabs {
-    position: relative;
-    display: inline-flex;
-    align-self: flex-start;
-    background: var(--backgroundSurfaceZ1);
-    border: 1px solid var(--borderPrimary);
-    border-radius: 8px;
-    padding: 3px;
-    gap: 2px;
-  }
-  .qs-tabs__indicator {
-    position: absolute;
-    top: 3px; left: 3px;
-    height: calc(100% - 6px);
-    border-radius: 6px;
-    background: var(--backgroundSurfaceZ2);
-    border: 1px solid var(--borderPrimary);
-    transition: transform 220ms var(--ease-out), width 220ms var(--ease-out);
-    z-index: 0;
-  }
-  .qs-tabs__btn {
-    position: relative;
-    z-index: 1;
-    appearance: none;
-    border: none;
-    background: transparent;
-    padding: 6px 14px;
-    border-radius: 6px;
-    color: var(--contentSecondary);
-    cursor: pointer;
-    transition: color 200ms var(--ease-out);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-  }
-  .qs-tabs__btn[data-active="true"] { color: var(--contentPrimary); }
-  .qs-tabs__dot { width: 6px; height: 6px; border-radius: 99px; background: var(--contentDisabled); transition: background 200ms var(--ease-out); }
-  .qs-tabs__dot.is-set { background: var(--contentAccent); }
-
-  .qs-row { display: flex; align-items: center; justify-content: space-between; }
-  .qs-input-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-
-  .qs-summary { display: flex; gap: 16px; }
-  .qs-summary-item { display: flex; flex-direction: column; gap: 2px; }
-  .qs-summary-item .lbl { color: var(--contentTertiary); }
-  .qs-summary-item .val { color: var(--contentPrimary); }
-  .qs-summary-item .val.unset { color: var(--contentDisabled); }
-
   /* bottom dock */
   .dock { flex-shrink: 0; border-top: 1px solid var(--borderPrimary); position: relative; }
   .dock__balance {
@@ -633,9 +584,6 @@
   .numpad__key--ghost { background: transparent; cursor: default; }
   .numpad__key--ghost:active { transform: none; }
 
-  .footnote { max-width: 360px; text-align: center; }
-  .footnote .heading-eyebrow { color: var(--contentTertiary); margin-bottom: 4px; }
-  .footnote p { color: var(--contentSecondary); font-size: 13px; line-height: 20px; }
 </style>
 </head>
 <body>
@@ -645,7 +593,6 @@
   <div class="segtabs__indicator" id="segtabsIndicator"></div>
   <button class="segtabs__btn heading-eyebrow" data-tab="existing" data-active="true">Existing</button>
   <button class="segtabs__btn heading-eyebrow" data-tab="paired">Paired Row</button>
-  <button class="segtabs__btn heading-eyebrow" data-tab="quickswitch">Quick Switch</button>
 </div>
 
 <!-- Phone frame (360x800) -->
@@ -806,54 +753,6 @@
           </div>
         </div>
 
-        <!-- ================= ITERATION 3: QUICK SWITCH (segmented mini-tab, one shared input) ================= -->
-        <div class="iteration-panel" data-panel="quickswitch">
-          <button class="add-sltgt mds-btn mds-btn--secondary mds-btn--medium body-base-heavy" id="addBtn-quickswitch">
-            <span class="mds-iconview mds-iconview--small"><i class="gh-standard-add-01"></i></span>
-            Add SL/TGT
-          </button>
-          <div class="expander" id="expander-quickswitch">
-            <div class="expander__inner">
-              <div class="qs-wrap">
-                <div class="remover" style="padding:0;">
-                  <div class="divider"></div>
-                  <button class="remover__x" data-remove="quickswitch"><span class="mds-iconview mds-iconview--medium"><i class="gh-standard-cancel-01"></i></span></button>
-                </div>
-
-                <div class="qs-row">
-                  <div class="qs-tabs" id="qsTabs">
-                    <div class="qs-tabs__indicator" id="qsTabsIndicator"></div>
-                    <button class="qs-tabs__btn body-base-heavy" data-qs="sl" data-active="true">
-                      <span class="qs-tabs__dot is-set" data-qsdot="sl"></span>Stoploss
-                    </button>
-                    <button class="qs-tabs__btn body-base-heavy" data-qs="tgt">
-                      <span class="qs-tabs__dot" data-qsdot="tgt"></span>Target
-                    </button>
-                  </div>
-                  <div class="qs-input-wrap">
-                    <div class="oc-input" data-field="qs-active" tabindex="0">
-                      <span class="oc-input__value body-large-heavy">490</span>
-                      <span class="oc-input__cursor"></span>
-                    </div>
-                    <span class="helper-text body-small" data-helper="qs-active">-2.00% from market</span>
-                  </div>
-                </div>
-
-                <div class="qs-summary">
-                  <div class="qs-summary-item">
-                    <span class="lbl body-small">SL</span>
-                    <span class="val body-base-heavy" data-qssummary="sl">₹490</span>
-                  </div>
-                  <div class="qs-summary-item">
-                    <span class="lbl body-small">Target</span>
-                    <span class="val body-base-heavy unset" data-qssummary="tgt">Not set</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
       <!-- Bottom dock -->
@@ -898,11 +797,6 @@
   </div>
 </div>
 
-<div class="footnote">
-  <div class="heading-eyebrow">SL/TGT layout exploration</div>
-  <p id="footnoteCopy">Baseline pattern — two full-width stacked rows. Faithful to the current production order card.</p>
-</div>
-
 <script>
 (function () {
   const DAY_OPEN = 500 / 1.0234;
@@ -913,12 +807,6 @@
   const segIndicator = document.getElementById('segtabsIndicator');
   const segBtns = Array.from(segtabs.querySelectorAll('.segtabs__btn'));
   const panels = Array.from(document.querySelectorAll('.iteration-panel'));
-
-  const footnotes = {
-    existing: 'Baseline pattern — two full-width stacked rows. Faithful to the current production order card.',
-    paired: 'SL and TGT share a single row with paired inputs — cuts one full row of vertical space.',
-    quickswitch: 'A mini segmented control switches the shared input between SL and TGT — most compact, one row total.'
-  };
 
   function moveSegIndicator(btn) {
     segIndicator.style.width = btn.offsetWidth + 'px';
@@ -932,7 +820,6 @@
       if (active) moveSegIndicator(b);
     });
     panels.forEach(p => p.classList.toggle('is-active', p.dataset.panel === tab));
-    document.getElementById('footnoteCopy').textContent = footnotes[tab];
   }
 
   segBtns.forEach(btn => {
@@ -954,7 +841,7 @@
   });
 
   /* ---------- Add SL/TGT reveal (per-iteration) ---------- */
-  ['existing', 'paired', 'quickswitch'].forEach(key => {
+  ['existing', 'paired'].forEach(key => {
     const addBtn = document.getElementById('addBtn-' + key);
     const expander = document.getElementById('expander-' + key);
     addBtn.addEventListener('click', () => {
@@ -972,49 +859,6 @@
       setTimeout(() => { addBtn.style.display = ''; }, 280);
     });
   });
-
-  /* ---------- Quick-switch mini tabs (Iteration 3) ---------- */
-  const qsTabs = document.getElementById('qsTabs');
-  const qsIndicator = document.getElementById('qsTabsIndicator');
-  const qsBtns = Array.from(qsTabs.querySelectorAll('.qs-tabs__btn'));
-  const qsValues = { sl: '490', tgt: '' };
-  let qsActive = 'sl';
-
-  function moveQsIndicator(btn) {
-    qsIndicator.style.width = btn.offsetWidth + 'px';
-    qsIndicator.style.transform = 'translateX(' + btn.offsetLeft + 'px)';
-  }
-
-  function renderQsInput() {
-    const field = document.querySelector('[data-field="qs-active"]');
-    const valueSpan = field.querySelector('.oc-input__value');
-    const val = qsValues[qsActive];
-    valueSpan.textContent = val;
-    field.classList.toggle('is-empty', !val);
-    validateAndRender('qs-active', qsActive === 'sl' ? 'sl' : 'tgt', val);
-    updateQsSummary();
-  }
-
-  function updateQsSummary() {
-    const slEl = document.querySelector('[data-qssummary="sl"]');
-    const tgtEl = document.querySelector('[data-qssummary="tgt"]');
-    slEl.textContent = qsValues.sl ? '₹' + qsValues.sl : 'Not set';
-    slEl.classList.toggle('unset', !qsValues.sl);
-    tgtEl.textContent = qsValues.tgt ? '₹' + qsValues.tgt : 'Not set';
-    tgtEl.classList.toggle('unset', !qsValues.tgt);
-    document.querySelector('[data-qsdot="sl"]').classList.toggle('is-set', !!qsValues.sl);
-    document.querySelector('[data-qsdot="tgt"]').classList.toggle('is-set', !!qsValues.tgt);
-  }
-
-  qsBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      qsActive = btn.dataset.qs;
-      qsBtns.forEach(b => b.dataset.active = (b === btn) ? 'true' : 'false');
-      moveQsIndicator(btn);
-      renderQsInput();
-    });
-  });
-  window.addEventListener('load', () => { moveQsIndicator(qsBtns[0]); updateQsSummary(); });
 
   /* ---------- Margin button (cycles leverage, demo interaction) ---------- */
   const leverageSteps = [5, 10, 20];
@@ -1042,8 +886,7 @@
     'sl-existing': '490',
     'tgt-existing': '',
     'sl-paired': '490',
-    'tgt-paired': '',
-    'qs-active': '490'
+    'tgt-paired': ''
   };
 
   function validateAndRender(fieldKey, kind, rawVal) {
@@ -1102,7 +945,6 @@
     if (key === 'price' || key === 'qty') return key;
     if (key.startsWith('sl')) return 'sl';
     if (key.startsWith('tgt')) return 'tgt';
-    if (key === 'qs-active') return qsActive === 'sl' ? 'sl' : 'tgt';
     return 'price';
   }
 
@@ -1112,7 +954,6 @@
     validateAndRender('tgt-existing', 'tgt', fieldValues['tgt-existing']);
     validateAndRender('sl-paired', 'sl', fieldValues['sl-paired']);
     validateAndRender('tgt-paired', 'tgt', fieldValues['tgt-paired']);
-    validateAndRender('qs-active', qsActive === 'sl' ? 'sl' : 'tgt', qsValues[qsActive]);
     updateCtaState();
   }
 
@@ -1159,21 +1000,15 @@
     'sl-existing': 'Stoploss (SL)',
     'tgt-existing': 'Target (TGT)',
     'sl-paired': 'Stoploss (SL)',
-    'tgt-paired': 'Target (TGT)',
-    'qs-active': null
+    'tgt-paired': 'Target (TGT)'
   };
 
   function currentValue(key) {
-    return key === 'qs-active' ? (qsValues[qsActive] || '') : (fieldValues[key] || '');
+    return fieldValues[key] || '';
   }
 
   function setValue(key, val) {
-    if (key === 'qs-active') {
-      qsValues[qsActive] = val;
-      updateQsSummary();
-    } else {
-      fieldValues[key] = val;
-    }
+    fieldValues[key] = val;
     const field = document.querySelector('[data-field="' + key + '"]');
     const valueSpan = field.querySelector('.oc-input__value');
     valueSpan.textContent = val;
@@ -1185,7 +1020,7 @@
 
   function openNumpad(key) {
     activeField = key;
-    numpadLabel.textContent = fieldLabels[key] || (key === 'qs-active' ? (qsActive === 'sl' ? 'Stoploss (SL)' : 'Target (TGT)') : '');
+    numpadLabel.textContent = fieldLabels[key] || '';
     numpad.classList.add('is-open');
   }
 
