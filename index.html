@@ -980,10 +980,6 @@
     ltpChangeEl.classList.toggle('is-up', changePct >= 0);
     ltpChangeEl.classList.toggle('is-down', changePct < 0);
 
-    const subEl = document.getElementById('appbarSub');
-    subEl.style.color = wentUp ? 'var(--contentPositive)' : 'var(--contentNegative)';
-    setTimeout(() => { subEl.style.color = ''; }, 200);
-
     revalidateAll();
     updateMargin();
   }
