@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intraday Buy — SL/TGT Iterations</title>
+
+<!-- 1. Icon stylesheet -->
+<link rel="stylesheet" href="https://mint-design-system.vercel.app/icons/standard/groww-huge-standard.css">
+
+<!-- 2. Fonts + tokens -->
+<style>
+  @font-face {
+    font-family: 'Sohne';
+    src: url('https://mint-design-system.vercel.app/typography/Sohne-Kraftig.otf') format('opentype');
+    font-weight: 500;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'GrowwSans';
+    src: url('https://mint-design-system.vercel.app/typography/GrowwSans-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'GrowwSans';
+    src: url('https://mint-design-system.vercel.app/typography/GrowwSans-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'GrowwHugeStandard';
+    src: url('https://mint-design-system.vercel.app/icons/standard/groww-huge-standard.woff2') format('woff2'),
+         url('https://mint-design-system.vercel.app/icons/standard/groww-huge-standard.otf') format('opentype');
+    font-display: swap;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'GrowwSans', -apple-system, sans-serif;
+    font-weight: 400;
+    color: var(--contentPrimary);
+    background: var(--backgroundPrimary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Font utility classes */
+  .body-small        { font-family: 'GrowwSans', sans-serif; font-weight: 400; font-size: 12px; line-height: 18px; }
+  .body-small-heavy  { font-family: 'GrowwSans', sans-serif; font-weight: 500; font-size: 12px; line-height: 18px; }
+  .body-base         { font-family: 'GrowwSans', sans-serif; font-weight: 400; font-size: 14px; line-height: 20px; }
+  .body-base-heavy   { font-family: 'GrowwSans', sans-serif; font-weight: 500; font-size: 14px; line-height: 20px; }
+  .body-large        { font-family: 'GrowwSans', sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; }
+  .body-large-heavy  { font-family: 'GrowwSans', sans-serif; font-weight: 500; font-size: 16px; line-height: 24px; }
+  .heading-eyebrow   { font-family: 'Sohne', sans-serif; font-weight: 500; font-size: 10px; line-height: 12px; letter-spacing: 0.2em; text-transform: uppercase; }
+  .heading-xsmall    { font-family: 'Sohne', sans-serif; font-weight: 500; font-size: 14px; line-height: 20px; }
+  .heading-small     { font-family: 'Sohne', sans-serif; font-weight: 500; font-size: 16px; line-height: 24px; }
+  .heading-base      { font-family: 'Sohne', sans-serif; font-weight: 500; font-size: 18px; line-height: 28px; }
+
+  .mds-iconview { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; color: inherit; }
+  .mds-iconview .hgi { line-height: 1; color: inherit; }
+  .mds-iconview--xsmall  { width: 12px; height: 12px; font-size: 12px; }
+  .mds-iconview--small   { width: 16px; height: 16px; font-size: 16px; }
+  .mds-iconview--medium  { width: 20px; height: 20px; font-size: 20px; }
+  .mds-iconview--large   { width: 24px; height: 24px; font-size: 24px; }
+  .mds-iconview--xlarge  { width: 28px; height: 28px; font-size: 28px; }
+
+  /* Colour tokens — dark mode (Groww Invest app surface) */
+  :root {
+    --backgroundPrimary:        #060809;
+    --backgroundSurfaceZ1:      #101314;
+    --backgroundSurfaceZ2:      #1A1D1F;
+    --backgroundSecondary:      #101314;
+    --backgroundTertiary:       #1A1D1F;
+    --backgroundAccent:         #04B488;
+    --backgroundNegative:       #ED5533;
+    --backgroundPositive:       #04B488;
+    --backgroundWarning:        #E7A71E;
+    --backgroundAccentSubtle:   #0B2620;
+    --backgroundNegativeSubtle: #2B1712;
+    --backgroundPositiveSubtle: #0B2620;
+    --backgroundWarningSubtle:  #2B2210;
+    --backgroundDisabled:       #16191A;
+    --backgroundTransparent:    transparent;
+    --borderPrimary:            #252A2C;
+    --borderNeutral:            #4A5254;
+    --borderAccent:             #04B488;
+    --borderNegative:           #ED5533;
+    --borderWarning:            #E7A71E;
+    --borderDisabled:           #1A1D1F;
+    --contentPrimary:           #F2F5F7;
+    --contentSecondary:         #989EA0;
+    --contentTertiary:          #6E7274;
+    --contentDisabled:          #4A4E50;
+    --contentAccent:            #04B488;
+    --contentPositive:          #04B488;
+    --contentNegative:          #ED5533;
+    --contentWarning:           #E7A71E;
+    --contentOnColour:          #FFFFFF;
+    --contentOnAccentSubtle:    #3DDBAE;
+    --contentOnPositiveSubtle:  #3DDBAE;
+    --contentOnNegativeSubtle:  #FF8567;
+    --contentOnWarningSubtle:   #F2C464;
+
+    /* Emil Kowalski design-eng easing curves */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  /* ============ PAGE / STAGE ============ */
+  html, body { height: 100%; }
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    background: radial-gradient(circle at 50% 0%, #14171a 0%, #060809 62%);
+    padding: 48px 16px 64px;
+  }
+
+  .stage-label {
+    color: var(--contentTertiary);
+    text-align: center;
+  }
+
+  /* ============ SEGMENTED TAB CONTROL (outside mockup) ============ */
+  .segtabs {
+    position: relative;
+    display: inline-flex;
+    background: var(--backgroundSurfaceZ1);
+    border: 1px solid var(--borderPrimary);
+    border-radius: 99px;
+    padding: 4px;
+    gap: 2px;
+    isolation: isolate;
+  }
+  .segtabs__indicator {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    height: calc(100% - 8px);
+    border-radius: 99px;
+    background: var(--backgroundAccent);
+    z-index: 0;
+    transition: transform 260ms var(--ease-out), width 260ms var(--ease-out);
+    will-change: transform, width;
+  }
+  .segtabs__btn {
+    position: relative;
+    z-index: 1;
+    appearance: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 9px 16px;
+    border-radius: 99px;
+    color: var(--contentSecondary);
+    transition: color 220ms var(--ease-out), transform 120ms var(--ease-out);
+    white-space: nowrap;
+  }
+  .segtabs__btn:active { transform: scale(0.96); }
+  .segtabs__btn[data-active="true"] { color: #04140F; }
+
+  /* ============ IPHONE 17 PRO MOCKUP ============ */
+  .phone {
+    position: relative;
+    width: 390px;
+    height: 844px;
+    padding: 14px;
+    border-radius: 74px;
+    background: linear-gradient(155deg, #4b4d4f 0%, #232527 22%, #131415 50%, #232527 78%, #57595b 100%);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.06) inset,
+      0 40px 90px -20px rgba(0,0,0,0.75),
+      0 10px 30px -8px rgba(0,0,0,0.6);
+  }
+  .phone::before {
+    /* titanium edge highlight */
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 68px;
+    border: 1px solid rgba(255,255,255,0.08);
+    pointer-events: none;
+  }
+  .phone__buttons span {
+    position: absolute;
+    background: linear-gradient(180deg, #38393b, #1c1d1e);
+    border-radius: 3px;
+    box-shadow: -1px 0 2px rgba(0,0,0,0.4) inset;
+  }
+  .phone__action   { left: -3px; top: 128px; width: 3px; height: 32px; }
+  .phone__vol-up   { left: -3px; top: 186px; width: 3px; height: 52px; }
+  .phone__vol-down { left: -3px; top: 248px; width: 3px; height: 52px; }
+  .phone__power    { right: -3px; top: 210px; width: 3px; height: 88px; }
+
+  .phone__screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 62px;
+    overflow: hidden;
+    background: var(--backgroundPrimary);
+    display: flex;
+    flex-direction: column;
+  }
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 124px;
+    height: 37px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 50;
+  }
+
+  /* ============ APP SCREEN ============ */
+  .app {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background: var(--backgroundPrimary);
+  }
+  .statusbar {
+    height: 54px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 28px 8px 32px;
+  }
+  .statusbar .time { color: var(--contentPrimary); font-size: 15px; font-weight: 600; font-family: -apple-system, sans-serif; }
+  .statusbar .icons { display: flex; align-items: center; gap: 5px; color: var(--contentPrimary); }
+  .statusbar .icons svg { display: block; }
+
+  .appbar {
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--borderPrimary);
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+  }
+  .appbar__icon-btn {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 99px;
+    color: var(--contentPrimary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background 160ms var(--ease-out), transform 120ms var(--ease-out);
+  }
+  .appbar__icon-btn:active { transform: scale(0.92); background: rgba(255,255,255,0.06); }
+  .appbar__content { flex: 1; min-width: 0; padding: 4px 4px; }
+  .appbar__title { color: var(--contentPrimary); }
+  .appbar__sub { color: var(--contentSecondary); margin-top: 2px; }
+
+  .screen-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 0 8px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .screen-body::-webkit-scrollbar { display: none; }
+
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    min-height: 48px;
+  }
+  .row__label { display: flex; align-items: center; gap: 4px; color: var(--contentPrimary); }
+  .row__label .tag { color: var(--contentPrimary); font-weight: 500; }
+  .row__label .chev { color: var(--contentSecondary); }
+
+  .field-col { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .helper-text { color: var(--contentSecondary); text-align: right; transition: color 150ms var(--ease-out); }
+  .helper-text.warning { color: var(--contentWarning); }
+  .helper-text.error   { color: var(--contentNegative); }
+
+  /* ---- oc-input-field ---- */
+  .oc-input {
+    display: inline-flex;
+    align-items: center;
+    width: 120px;
+    height: 40px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--borderPrimary);
+    background: transparent;
+    box-sizing: border-box;
+    position: relative;
+    justify-content: flex-end;
+    cursor: text;
+    transition: border-color 150ms var(--ease-out), padding 150ms var(--ease-out), background 150ms var(--ease-out);
+  }
+  .oc-input.is-focus,
+  .oc-input.is-typing { border: 2px solid var(--borderNeutral); padding: 11px; }
+  .oc-input.is-warning { border: 2px solid var(--borderWarning); padding: 11px; }
+  .oc-input.is-error   { border: 2px solid var(--borderNegative); padding: 11px; }
+  .oc-input.is-disabled {
+    background: var(--backgroundDisabled);
+    border-color: var(--borderDisabled);
+    pointer-events: none;
+  }
+  .oc-input__value {
+    font-family: 'GrowwSans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    color: var(--contentPrimary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 150ms var(--ease-out);
+  }
+  .oc-input.is-disabled .oc-input__value { color: var(--contentDisabled); }
+  .oc-input.is-empty .oc-input__value { opacity: 0; width: 0; }
+  .oc-input__cursor {
+    display: none;
+    width: 1px;
+    height: 24px;
+    background: var(--contentAccent);
+    animation: oc-cursor-blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+  .oc-input.is-typing .oc-input__cursor { display: inline-block; }
+  @keyframes oc-cursor-blink { 50% { opacity: 0; } }
+
+  .divider { height: 1px; background: var(--borderPrimary); width: 100%; }
+
+  /* remover row (divider + x button) */
+  .remover {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    height: 20px;
+  }
+  .remover .divider { flex: 1; }
+  .remover__x {
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--contentSecondary);
+    background: transparent; border: none; border-radius: 99px;
+    cursor: pointer;
+    transition: transform 120ms var(--ease-out), color 150ms var(--ease-out);
+  }
+  .remover__x:active { transform: scale(0.85); }
+  .remover__x:hover { color: var(--contentPrimary); }
+
+  /* add SL/TGT trigger button */
+  .add-sltgt {
+    margin: 4px 16px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px dashed var(--borderPrimary);
+    background: transparent;
+    color: var(--contentAccent);
+    cursor: pointer;
+    transition: transform 120ms var(--ease-out), background 150ms var(--ease-out), border-color 150ms var(--ease-out);
+  }
+  .add-sltgt:active { transform: scale(0.98); }
+  .add-sltgt:hover { border-color: var(--borderAccent); background: var(--backgroundAccentSubtle); }
+
+  /* expand/collapse wrapper using grid-template-rows trick */
+  .expander {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 280ms var(--ease-out);
+  }
+  .expander.is-open { grid-template-rows: 1fr; }
+  .expander__inner { overflow: hidden; min-height: 0; }
+
+  /* ---- Iteration content sections ---- */
+  .sltgt-section { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
+
+  /* Iteration 2: paired row */
+  .paired-row {
+    display: flex;
+    gap: 8px;
+    padding: 0 16px;
+  }
+  .paired-col { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .paired-col .oc-input { width: 100%; }
+  .paired-label { color: var(--contentSecondary); }
+
+  /* Iteration 3: quick switch */
+  .qs-wrap { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+  .qs-tabs {
+    position: relative;
+    display: inline-flex;
+    align-self: flex-start;
+    background: var(--backgroundSurfaceZ1);
+    border: 1px solid var(--borderPrimary);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .qs-tabs__indicator {
+    position: absolute;
+    top: 3px; left: 3px;
+    height: calc(100% - 6px);
+    border-radius: 6px;
+    background: var(--backgroundSurfaceZ2);
+    border: 1px solid var(--borderPrimary);
+    transition: transform 220ms var(--ease-out), width 220ms var(--ease-out);
+    z-index: 0;
+  }
+  .qs-tabs__btn {
+    position: relative;
+    z-index: 1;
+    appearance: none;
+    border: none;
+    background: transparent;
+    padding: 6px 14px;
+    border-radius: 6px;
+    color: var(--contentSecondary);
+    cursor: pointer;
+    transition: color 200ms var(--ease-out);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .qs-tabs__btn[data-active="true"] { color: var(--contentPrimary); }
+  .qs-tabs__dot { width: 6px; height: 6px; border-radius: 99px; background: var(--contentDisabled); transition: background 200ms var(--ease-out); }
+  .qs-tabs__dot.is-set { background: var(--contentAccent); }
+
+  .qs-row { display: flex; align-items: center; justify-content: space-between; }
+  .qs-input-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
+  .qs-summary { display: flex; gap: 16px; }
+  .qs-summary-item { display: flex; flex-direction: column; gap: 2px; }
+  .qs-summary-item .lbl { color: var(--contentTertiary); }
+  .qs-summary-item .val { color: var(--contentPrimary); }
+  .qs-summary-item .val.unset { color: var(--contentDisabled); }
+
+  /* bottom dock */
+  .dock { flex-shrink: 0; border-top: 1px solid var(--borderPrimary); }
+  .dock__balance {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px 0;
+  }
+  .dock__balance .lbl { color: var(--contentSecondary); }
+  .dock__balance .margin { color: var(--contentSecondary); border-bottom: 1px dashed var(--contentSecondary); }
+  .dock__cta-wrap { padding: 12px 16px 16px; }
+  .dock__cta {
+    width: 100%;
+    height: 48px;
+    border-radius: 8px;
+    border: none;
+    background: var(--backgroundAccent);
+    color: #04140F;
+    font-family: 'GrowwSans', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 140ms var(--ease-out), opacity 150ms var(--ease-out), background 150ms var(--ease-out);
+  }
+  .dock__cta:active { transform: scale(0.97); }
+  .dock__cta:disabled {
+    background: var(--backgroundDisabled);
+    color: var(--contentDisabled);
+    cursor: not-allowed;
+    transform: none;
+  }
+  .home-indicator {
+    display: flex; justify-content: center; padding: 8px 0 6px;
+  }
+  .home-indicator span { width: 134px; height: 5px; border-radius: 99px; background: rgba(255,255,255,0.35); }
+
+  /* ---- iteration panel swap animation ---- */
+  .iteration-panel {
+    display: none;
+    animation: panelIn 260ms var(--ease-out);
+  }
+  .iteration-panel.is-active { display: block; }
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .footnote { max-width: 390px; text-align: center; }
+  .footnote .heading-eyebrow { color: var(--contentTertiary); margin-bottom: 4px; }
+  .footnote p { color: var(--contentSecondary); font-size: 13px; line-height: 20px; }
+</style>
+</head>
+<body>
+
+<!-- Segmented tab control — OUTSIDE the mockup -->
+<div class="segtabs" id="segtabs">
+  <div class="segtabs__indicator" id="segtabsIndicator"></div>
+  <button class="segtabs__btn heading-eyebrow" data-tab="existing" data-active="true">Existing</button>
+  <button class="segtabs__btn heading-eyebrow" data-tab="paired">Paired Row</button>
+  <button class="segtabs__btn heading-eyebrow" data-tab="quickswitch">Quick Switch</button>
+</div>
+
+<!-- iPhone 17 Pro mockup -->
+<div class="phone">
+  <div class="phone__buttons">
+    <span class="phone__action"></span>
+    <span class="phone__vol-up"></span>
+    <span class="phone__vol-down"></span>
+    <span class="phone__power"></span>
+  </div>
+  <div class="phone__screen">
+    <div class="dynamic-island"></div>
+    <div class="app">
+      <!-- Status bar -->
+      <div class="statusbar">
+        <div class="time">12:30</div>
+        <div class="icons">
+          <svg width="19" height="12" viewBox="0 0 19 12" fill="none"><path d="M9.5 2.4C12.1 2.4 14.5 3.4 16.3 5.1L17.9 3.4C15.6 1.3 12.7 0 9.5 0C6.3 0 3.4 1.3 1.1 3.4L2.7 5.1C4.5 3.4 6.9 2.4 9.5 2.4Z" fill="white"/><path d="M9.5 6.5C10.9 6.5 12.2 7 13.2 7.9L14.8 6.2C13.4 4.9 11.5 4.1 9.5 4.1C7.5 4.1 5.6 4.9 4.2 6.2L5.8 7.9C6.8 7 8.1 6.5 9.5 6.5Z" fill="white"/><path d="M9.5 11L11.8 8.6C11.1 8 10.3 7.7 9.5 7.7C8.7 7.7 7.9 8 7.2 8.6L9.5 11Z" fill="white"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="0.5" fill="white"/><rect x="4.3" y="5.5" width="3" height="6.5" rx="0.5" fill="white"/><rect x="8.6" y="3" width="3" height="9" rx="0.5" fill="white"/><rect x="13" y="0" width="3" height="12" rx="0.5" fill="white" fill-opacity="0.4"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="white" stroke-opacity="0.4"/><rect x="2" y="2" width="16" height="8" rx="1.5" fill="white"/><rect x="23" y="4" width="1.5" height="4" rx="0.75" fill="white" fill-opacity="0.4"/></svg>
+        </div>
+      </div>
+
+      <!-- App bar -->
+      <div class="appbar">
+        <button class="appbar__icon-btn">
+          <span class="mds-iconview mds-iconview--large"><i class="gh-standard-arrow-left-01"></i></span>
+        </button>
+        <div class="appbar__content">
+          <div class="appbar__title heading-small">Swiggy</div>
+          <div class="appbar__sub body-small">NSE ₹500.00 (2.34%) &nbsp;•&nbsp; BSE ₹500.02</div>
+        </div>
+        <button class="appbar__icon-btn">
+          <span class="mds-iconview mds-iconview--large"><i class="gh-standard-arrow-up-down-01"></i></span>
+        </button>
+      </div>
+
+      <!-- Screen body -->
+      <div class="screen-body">
+
+        <!-- Qty -->
+        <div class="row">
+          <div class="row__label body-large">
+            <span>Qty</span><span class="tag body-large-heavy">NSE</span>
+            <span class="mds-iconview mds-iconview--small chev"><i class="gh-standard-unfold-more"></i></span>
+          </div>
+          <div class="field-col">
+            <div class="oc-input" data-field="qty" tabindex="0">
+              <span class="oc-input__value body-large-heavy">200</span>
+              <span class="oc-input__cursor"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Price -->
+        <div class="row" style="align-items:flex-start; padding-top:4px;">
+          <div class="row__label body-large" style="height:48px; align-items:center; display:flex;">
+            <span>Price</span><span class="tag body-large-heavy">Limit</span>
+            <span class="mds-iconview mds-iconview--small chev"><i class="gh-standard-unfold-more"></i></span>
+          </div>
+          <div class="field-col">
+            <div class="oc-input" data-field="price" tabindex="0">
+              <span class="oc-input__value body-large-heavy">498</span>
+              <span class="oc-input__cursor"></span>
+            </div>
+            <div class="helper-text body-small" data-helper="price">-0.50% from market</div>
+          </div>
+        </div>
+
+        <!-- ================= ITERATION 1: EXISTING (crosshair, stacked full rows) ================= -->
+        <div class="iteration-panel is-active" data-panel="existing">
+          <button class="add-sltgt body-base-heavy" id="addBtn-existing">
+            <span class="mds-iconview mds-iconview--small"><i class="gh-standard-add-01"></i></span>
+            Add SL/TGT
+          </button>
+          <div class="expander" id="expander-existing">
+            <div class="expander__inner">
+              <div class="sltgt-section">
+
+                <div>
+                  <div class="remover">
+                    <div class="divider"></div>
+                    <button class="remover__x" data-remove="existing"><span class="mds-iconview mds-iconview--medium"><i class="gh-standard-cancel-01"></i></span></button>
+                  </div>
+                  <div class="row">
+                    <div class="row__label body-large">Stoploss (SL)</div>
+                    <div class="field-col">
+                      <div class="oc-input" data-field="sl-existing" tabindex="0">
+                        <span class="oc-input__value body-large-heavy">490</span>
+                        <span class="oc-input__cursor"></span>
+                      </div>
+                      <div class="helper-text body-small" data-helper="sl-existing">-2.00% from market</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="remover">
+                    <div class="divider"></div>
+                    <button class="remover__x" data-remove="existing"><span class="mds-iconview mds-iconview--medium"><i class="gh-standard-cancel-01"></i></span></button>
+                  </div>
+                  <div class="row">
+                    <div class="row__label body-large">Target (TGT)</div>
+                    <div class="field-col">
+                      <div class="oc-input is-empty" data-field="tgt-existing" tabindex="0">
+                        <span class="oc-input__value body-large-heavy"></span>
+                        <span class="oc-input__cursor"></span>
+                      </div>
+                      <div class="helper-text body-small" data-helper="tgt-existing">&nbsp;</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= ITERATION 2: PAIRED ROW (SL + TGT side by side, one row) ================= -->
+        <div class="iteration-panel" data-panel="paired">
+          <button class="add-sltgt body-base-heavy" id="addBtn-paired">
+            <span class="mds-iconview mds-iconview--small"><i class="gh-standard-add-01"></i></span>
+            Add SL/TGT
+          </button>
+          <div class="expander" id="expander-paired">
+            <div class="expander__inner">
+              <div class="sltgt-section">
+                <div class="remover">
+                  <div class="divider"></div>
+                  <button class="remover__x" data-remove="paired"><span class="mds-iconview mds-iconview--medium"><i class="gh-standard-cancel-01"></i></span></button>
+                </div>
+                <div class="paired-row">
+                  <div class="paired-col">
+                    <span class="paired-label body-small-heavy">Stoploss (SL)</span>
+                    <div class="oc-input" data-field="sl-paired" tabindex="0">
+                      <span class="oc-input__value body-large-heavy">490</span>
+                      <span class="oc-input__cursor"></span>
+                    </div>
+                    <span class="helper-text body-small" data-helper="sl-paired" style="text-align:left;">-2.00% from market</span>
+                  </div>
+                  <div class="paired-col">
+                    <span class="paired-label body-small-heavy">Target (TGT)</span>
+                    <div class="oc-input is-empty" data-field="tgt-paired" tabindex="0">
+                      <span class="oc-input__value body-large-heavy"></span>
+                      <span class="oc-input__cursor"></span>
+                    </div>
+                    <span class="helper-text body-small" data-helper="tgt-paired" style="text-align:left;">&nbsp;</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= ITERATION 3: QUICK SWITCH (segmented mini-tab, one shared input) ================= -->
+        <div class="iteration-panel" data-panel="quickswitch">
+          <button class="add-sltgt body-base-heavy" id="addBtn-quickswitch">
+            <span class="mds-iconview mds-iconview--small"><i class="gh-standard-add-01"></i></span>
+            Add SL/TGT
+          </button>
+          <div class="expander" id="expander-quickswitch">
+            <div class="expander__inner">
+              <div class="qs-wrap">
+                <div class="remover" style="padding:0;">
+                  <div class="divider"></div>
+                  <button class="remover__x" data-remove="quickswitch"><span class="mds-iconview mds-iconview--medium"><i class="gh-standard-cancel-01"></i></span></button>
+                </div>
+
+                <div class="qs-row">
+                  <div class="qs-tabs" id="qsTabs">
+                    <div class="qs-tabs__indicator" id="qsTabsIndicator"></div>
+                    <button class="qs-tabs__btn body-base-heavy" data-qs="sl" data-active="true">
+                      <span class="qs-tabs__dot is-set" data-qsdot="sl"></span>Stoploss
+                    </button>
+                    <button class="qs-tabs__btn body-base-heavy" data-qs="tgt">
+                      <span class="qs-tabs__dot" data-qsdot="tgt"></span>Target
+                    </button>
+                  </div>
+                  <div class="qs-input-wrap">
+                    <div class="oc-input" data-field="qs-active" tabindex="0">
+                      <span class="oc-input__value body-large-heavy">490</span>
+                      <span class="oc-input__cursor"></span>
+                    </div>
+                    <span class="helper-text body-small" data-helper="qs-active">-2.00% from market</span>
+                  </div>
+                </div>
+
+                <div class="qs-summary">
+                  <div class="qs-summary-item">
+                    <span class="lbl body-small">SL</span>
+                    <span class="val body-base-heavy" data-qssummary="sl">₹490</span>
+                  </div>
+                  <div class="qs-summary-item">
+                    <span class="lbl body-small">Target</span>
+                    <span class="val body-base-heavy unset" data-qssummary="tgt">Not set</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom dock -->
+      <div class="dock">
+        <div class="dock__balance">
+          <span class="lbl body-small">Balance: ₹1,00,000</span>
+          <span class="margin body-small">Margin (5x): ₹0</span>
+        </div>
+        <div class="dock__cta-wrap">
+          <button class="dock__cta" id="ctaBuy">Buy</button>
+        </div>
+        <div class="home-indicator"><span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footnote">
+  <div class="heading-eyebrow">SL/TGT layout exploration</div>
+  <p id="footnoteCopy">Baseline pattern — two full-width stacked rows. Faithful to the current production order card.</p>
+</div>
+
+<script>
+(function () {
+  const LTP = 500;
+
+  /* ---------- Segmented tab control (outside mockup) ---------- */
+  const segtabs = document.getElementById('segtabs');
+  const segIndicator = document.getElementById('segtabsIndicator');
+  const segBtns = Array.from(segtabs.querySelectorAll('.segtabs__btn'));
+  const panels = Array.from(document.querySelectorAll('.iteration-panel'));
+
+  const footnotes = {
+    existing: 'Baseline pattern — two full-width stacked rows. Faithful to the current production order card.',
+    paired: 'SL and TGT share a single row with paired inputs — cuts one full row of vertical space.',
+    quickswitch: 'A mini segmented control switches the shared input between SL and TGT — most compact, one row total.'
+  };
+
+  function moveSegIndicator(btn) {
+    segIndicator.style.width = btn.offsetWidth + 'px';
+    segIndicator.style.transform = 'translateX(' + btn.offsetLeft + 'px)';
+  }
+
+  function setActiveTab(tab) {
+    segBtns.forEach(b => {
+      const active = b.dataset.tab === tab;
+      b.dataset.active = active ? 'true' : 'false';
+      if (active) moveSegIndicator(b);
+    });
+    panels.forEach(p => p.classList.toggle('is-active', p.dataset.panel === tab));
+    document.getElementById('footnoteCopy').textContent = footnotes[tab];
+  }
+
+  segBtns.forEach(btn => {
+    btn.addEventListener('click', () => setActiveTab(btn.dataset.tab));
+  });
+
+  window.addEventListener('load', () => moveSegIndicator(segBtns[0]));
+  window.addEventListener('resize', () => {
+    const active = segBtns.find(b => b.dataset.active === 'true');
+    if (active) moveSegIndicator(active);
+  });
+
+  /* ---------- Add SL/TGT reveal (per-iteration) ---------- */
+  ['existing', 'paired', 'quickswitch'].forEach(key => {
+    const addBtn = document.getElementById('addBtn-' + key);
+    const expander = document.getElementById('expander-' + key);
+    addBtn.addEventListener('click', () => {
+      expander.classList.add('is-open');
+      addBtn.style.display = 'none';
+    });
+  });
+
+  document.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.remove;
+      const expander = document.getElementById('expander-' + key);
+      const addBtn = document.getElementById('addBtn-' + key);
+      expander.classList.remove('is-open');
+      setTimeout(() => { addBtn.style.display = ''; }, 280);
+    });
+  });
+
+  /* ---------- Quick-switch mini tabs (Iteration 3) ---------- */
+  const qsTabs = document.getElementById('qsTabs');
+  const qsIndicator = document.getElementById('qsTabsIndicator');
+  const qsBtns = Array.from(qsTabs.querySelectorAll('.qs-tabs__btn'));
+  const qsValues = { sl: '490', tgt: '' };
+  let qsActive = 'sl';
+
+  function moveQsIndicator(btn) {
+    qsIndicator.style.width = btn.offsetWidth + 'px';
+    qsIndicator.style.transform = 'translateX(' + btn.offsetLeft + 'px)';
+  }
+
+  function renderQsInput() {
+    const field = document.querySelector('[data-field="qs-active"]');
+    const valueSpan = field.querySelector('.oc-input__value');
+    const val = qsValues[qsActive];
+    valueSpan.textContent = val;
+    field.classList.toggle('is-empty', !val);
+    validateAndRender('qs-active', qsActive === 'sl' ? 'sl' : 'tgt', val);
+    updateQsSummary();
+  }
+
+  function updateQsSummary() {
+    const slEl = document.querySelector('[data-qssummary="sl"]');
+    const tgtEl = document.querySelector('[data-qssummary="tgt"]');
+    slEl.textContent = qsValues.sl ? '₹' + qsValues.sl : 'Not set';
+    slEl.classList.toggle('unset', !qsValues.sl);
+    tgtEl.textContent = qsValues.tgt ? '₹' + qsValues.tgt : 'Not set';
+    tgtEl.classList.toggle('unset', !qsValues.tgt);
+    document.querySelector('[data-qsdot="sl"]').classList.toggle('is-set', !!qsValues.sl);
+    document.querySelector('[data-qsdot="tgt"]').classList.toggle('is-set', !!qsValues.tgt);
+  }
+
+  qsBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      qsActive = btn.dataset.qs;
+      qsBtns.forEach(b => b.dataset.active = (b === btn) ? 'true' : 'false');
+      moveQsIndicator(btn);
+      renderQsInput();
+    });
+  });
+  window.addEventListener('load', () => { moveQsIndicator(qsBtns[0]); updateQsSummary(); });
+
+  /* ---------- Input focus / typing / validation ---------- */
+  const fieldValues = {
+    'qty': '200',
+    'price': '498',
+    'sl-existing': '490',
+    'tgt-existing': '',
+    'sl-paired': '490',
+    'tgt-paired': '',
+    'qs-active': '490'
+  };
+
+  function pct(diffField, base) {
+    return ((base - LTP) / LTP * 100);
+  }
+
+  function validateAndRender(fieldKey, kind, rawVal) {
+    const helper = document.querySelector('[data-helper="' + fieldKey + '"]');
+    const inputEl = document.querySelector('[data-field="' + fieldKey + '"]');
+    if (!helper || !inputEl) return;
+    const val = parseFloat(rawVal);
+
+    inputEl.classList.remove('is-warning', 'is-error');
+
+    if (kind === 'price') {
+      if (isNaN(val) || rawVal === '') { helper.textContent = ' '; helper.className = 'helper-text body-small'; return; }
+      const diff = ((val - LTP) / LTP) * 100;
+      helper.textContent = (diff >= 0 ? '+' : '') + diff.toFixed(2) + '% from market';
+      helper.className = 'helper-text body-small';
+      return;
+    }
+
+    if (kind === 'sl') {
+      if (isNaN(val) || rawVal === '') { helper.textContent = ' '; helper.className = 'helper-text body-small'; return; }
+      const diff = ((val - LTP) / LTP) * 100;
+      if (val >= LTP) {
+        helper.textContent = 'Stoploss must be below LTP (₹' + LTP + ')';
+        helper.className = 'helper-text body-small error';
+        inputEl.classList.add('is-error');
+      } else if (Math.abs(diff) < 0.5) {
+        helper.textContent = 'Very close to LTP — may trigger instantly';
+        helper.className = 'helper-text body-small warning';
+        inputEl.classList.add('is-warning');
+      } else {
+        helper.textContent = diff.toFixed(2) + '% from market';
+        helper.className = 'helper-text body-small';
+      }
+      return;
+    }
+
+    if (kind === 'tgt') {
+      if (isNaN(val) || rawVal === '') { helper.textContent = ' '; helper.className = 'helper-text body-small'; return; }
+      const diff = ((val - LTP) / LTP) * 100;
+      if (val <= LTP) {
+        helper.textContent = 'Target must be above LTP (₹' + LTP + ')';
+        helper.className = 'helper-text body-small error';
+        inputEl.classList.add('is-error');
+      } else if (Math.abs(diff) < 0.5) {
+        helper.textContent = 'Very close to LTP — may trigger instantly';
+        helper.className = 'helper-text body-small warning';
+        inputEl.classList.add('is-warning');
+      } else {
+        helper.textContent = '+' + diff.toFixed(2) + '% from market';
+        helper.className = 'helper-text body-small';
+      }
+    }
+  }
+
+  function fieldKind(key) {
+    if (key === 'price' || key === 'qty') return key;
+    if (key.startsWith('sl')) return 'sl';
+    if (key.startsWith('tgt')) return 'tgt';
+    if (key === 'qs-active') return qsActive === 'sl' ? 'sl' : 'tgt';
+    return 'price';
+  }
+
+  function updateCtaState() {
+    const anyError = Array.from(document.querySelectorAll('.oc-input.is-error')).length > 0;
+    document.getElementById('ctaBuy').disabled = anyError;
+  }
+
+  document.querySelectorAll('.oc-input[data-field]').forEach(field => {
+    const key = field.dataset.field;
+    const valueSpan = field.querySelector('.oc-input__value');
+
+    field.addEventListener('focus', () => field.classList.add('is-focus'));
+    field.addEventListener('blur', () => {
+      field.classList.remove('is-focus', 'is-typing');
+    });
+
+    field.addEventListener('click', () => {
+      field.focus();
+      field.classList.add('is-typing');
+    });
+
+    field.addEventListener('keydown', (e) => {
+      if (key === 'qty') return; // qty not part of this exploration's validation
+      field.classList.add('is-typing');
+      let current = (key === 'qs-active' ? qsValues[qsActive] : fieldValues[key]) || '';
+      if (/^[0-9]$/.test(e.key) && current.length < 6) {
+        current += e.key;
+      } else if (e.key === 'Backspace') {
+        current = current.slice(0, -1);
+      } else if (e.key === 'Tab') {
+        return;
+      } else {
+        e.preventDefault();
+        return;
+      }
+      e.preventDefault();
+
+      if (key === 'qs-active') {
+        qsValues[qsActive] = current;
+        updateQsSummary();
+      } else {
+        fieldValues[key] = current;
+      }
+      valueSpan.textContent = current;
+      field.classList.toggle('is-empty', !current);
+      validateAndRender(key, fieldKind(key), current);
+      updateCtaState();
+    });
+  });
+
+  /* initial validation pass */
+  validateAndRender('price', 'price', fieldValues.price);
+  validateAndRender('sl-existing', 'sl', fieldValues['sl-existing']);
+  validateAndRender('tgt-existing', 'tgt', fieldValues['tgt-existing']);
+  validateAndRender('sl-paired', 'sl', fieldValues['sl-paired']);
+  validateAndRender('tgt-paired', 'tgt', fieldValues['tgt-paired']);
+  validateAndRender('qs-active', 'sl', qsValues.sl);
+})();
+</script>
+
+</body>
+</html>
