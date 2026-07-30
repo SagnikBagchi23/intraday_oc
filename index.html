@@ -139,15 +139,15 @@
     background: var(--backgroundSurfaceZ1);
     border: 1px solid var(--borderPrimary);
     border-radius: 99px;
-    padding: 4px 8px;
+    padding: 2px;
     gap: 4px;
     isolation: isolate;
   }
   .segtabs__indicator {
     position: absolute;
-    top: 4px;
-    left: 8px;
-    height: calc(100% - 8px);
+    top: 2px;
+    left: 2px;
+    height: calc(100% - 4px);
     border-radius: 99px;
     background: var(--backgroundSurfaceZ2);
     border: 1px solid var(--borderNeutral);
@@ -276,7 +276,7 @@
   .mds-pill[data-selected="true"] {
     background: var(--backgroundTertiary);
     border-color: var(--borderNeutral);
-    border-width: 1.5px;
+    border-width: 1px;
     color: var(--contentPrimary);
   }
 
@@ -424,9 +424,9 @@
     transition: border-color 150ms var(--ease-out), padding 150ms var(--ease-out), background 150ms var(--ease-out);
   }
   .oc-input.is-focus,
-  .oc-input.is-typing { border: 2px solid var(--borderNeutral); padding: 11px; }
-  .oc-input.is-warning { border: 2px solid var(--borderWarning); padding: 11px; }
-  .oc-input.is-error   { border: 2px solid var(--borderNegative); padding: 11px; }
+  .oc-input.is-typing { border: 1px solid var(--borderNeutral); padding: 12px; }
+  .oc-input.is-warning { border: 1px solid var(--borderWarning); padding: 12px; }
+  .oc-input.is-error   { border: 1px solid var(--borderNegative); padding: 12px; }
   .oc-input.is-disabled {
     background: var(--backgroundDisabled);
     border-color: var(--borderDisabled);
@@ -560,8 +560,10 @@
     background: none;
     border: none;
     color: var(--contentAccent);
+    text-decoration: underline;
     cursor: pointer;
-    padding: 4px 6px;
+    height: 24px;
+    padding: 0 2px;
     transition: opacity 150ms var(--ease-out), transform 120ms var(--ease-out);
   }
   .numpad__done:active { transform: scale(0.94); }
@@ -695,7 +697,7 @@
                 <div>
                   <div class="remover">
                     <div class="divider"></div>
-                    <button class="remover__x" data-remove="existing"><span class="mds-iconview mds-iconview--medium"><i class="gh-standard-cancel-01"></i></span></button>
+                    <button class="remover__x" data-remove="existing"><span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span></button>
                   </div>
                   <div class="row">
                     <div class="row__label body-large">Stoploss (SL)</div>
@@ -712,7 +714,7 @@
                 <div>
                   <div class="remover">
                     <div class="divider"></div>
-                    <button class="remover__x" data-remove="existing"><span class="mds-iconview mds-iconview--medium"><i class="gh-standard-cancel-01"></i></span></button>
+                    <button class="remover__x" data-remove="existing"><span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span></button>
                   </div>
                   <div class="row">
                     <div class="row__label body-large">Target (TGT)</div>
@@ -744,7 +746,7 @@
               <div class="sltgt-section">
                 <div class="remover">
                   <div class="divider"></div>
-                  <button class="remover__x" data-remove="paired"><span class="mds-iconview mds-iconview--medium"><i class="gh-standard-cancel-01"></i></span></button>
+                  <button class="remover__x" data-remove="paired"><span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span></button>
                 </div>
                 <div class="paired-row">
                   <div class="paired-col">
