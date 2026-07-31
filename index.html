@@ -349,10 +349,14 @@
 
   .appbar {
     flex-shrink: 0;
-    border-bottom: 1px solid var(--borderPrimary);
+    border-bottom: 1px solid transparent;
     display: flex;
     align-items: center;
     padding: 4px 8px;
+    transition: border-color 200ms var(--ease-out);
+  }
+  .appbar.is-scrolled {
+    border-bottom-color: var(--borderPrimary);
   }
   .appbar__icon-btn {
     width: 40px; height: 40px;
@@ -595,6 +599,8 @@
   .inline-x:active { transform: scale(0.85); }
   .inline-x:hover { color: var(--contentPrimary); }
   .inline-x--xsmall { width: 12px; height: 12px; font-size: 12px; }
+  .label-with-x { display: flex; align-items: center; gap: 8px; }
+  .label-with-x .inline-x { color: var(--contentTertiary); }
 
   .paired-header {
     display: flex;
@@ -675,6 +681,7 @@
   <button class="segtabs__btn heading-eyebrow" data-tab="paired">I1</button>
   <button class="segtabs__btn heading-eyebrow" data-tab="inline">I2</button>
   <button class="segtabs__btn heading-eyebrow" data-tab="nodismiss">I3</button>
+  <button class="segtabs__btn heading-eyebrow" data-tab="labelx">I4</button>
 </div>
 
 <!-- Phone frame (360x800) -->
@@ -983,6 +990,69 @@
           </div>
         </div>
 
+        <!-- ================= ITERATION 5: I4 (label-adjacent X, no divider) ================= -->
+        <div class="iteration-panel" data-panel="labelx">
+          <div class="field-expander is-open" id="addBtnExpander-labelx">
+            <div class="field-expander__inner">
+              <div class="add-sltgt-row">
+                <button class="add-sltgt mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" id="addBtn-labelx">
+                  <span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-add-01"></i></span>
+                  <span class="add-sltgt__text">Add SL/TGT</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="sltgt-section">
+            <div class="field-expander" id="expander-sl-labelx">
+              <div class="field-expander__inner">
+                <div class="row row--align-input">
+                  <div class="row__label body-large">
+                    <div class="label-with-x">
+                      <span>Stoploss (SL)</span>
+                      <button class="inline-x" data-remove-field="sl-labelx"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
+                    </div>
+                  </div>
+                  <div class="field-col">
+                    <div class="oc-input" data-field="sl-labelx" tabindex="0">
+                      <span class="oc-input__value body-large-heavy">490</span>
+                      <span class="oc-input__cursor"></span>
+                    </div>
+                    <div class="est-pnl" data-pnl="sl-labelx" style="padding:0;">
+                      <span class="est-pnl__label body-small">Est. loss</span>
+                      <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
+                      <button class="est-pnl__toggle" data-pnl-toggle="sl-labelx"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field-expander" id="expander-tgt-labelx">
+              <div class="field-expander__inner">
+                <div class="row row--align-input">
+                  <div class="row__label body-large">
+                    <div class="label-with-x">
+                      <span>Target (TGT)</span>
+                      <button class="inline-x" data-remove-field="tgt-labelx"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
+                    </div>
+                  </div>
+                  <div class="field-col">
+                    <div class="oc-input is-empty" data-field="tgt-labelx" tabindex="0">
+                      <span class="oc-input__value body-large-heavy"></span>
+                      <span class="oc-input__cursor"></span>
+                    </div>
+                    <div class="est-pnl" data-pnl="tgt-labelx" style="padding:0;">
+                      <span class="est-pnl__label body-small">Est. profit</span>
+                      <span class="est-pnl__value body-small-heavy">--</span>
+                      <button class="est-pnl__toggle" data-pnl-toggle="tgt-labelx"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- Bottom dock -->
@@ -1035,6 +1105,15 @@
 (function () {
   const DAY_OPEN = 500 / 1.0234;
   let LTP = 500;
+
+  /* ---------- Appbar scroll stroke ---------- */
+  document.querySelectorAll('.screen-body').forEach(body => {
+    const appbar = body.previousElementSibling;
+    if (!appbar || !appbar.classList.contains('appbar')) return;
+    body.addEventListener('scroll', () => {
+      appbar.classList.toggle('is-scrolled', body.scrollTop > 0);
+    }, { passive: true });
+  });
 
   /* ---------- Segmented tab control (outside mockup) ---------- */
   const segtabs = document.getElementById('segtabs');
@@ -1089,7 +1168,7 @@
     }
   }
 
-  ['existing', 'paired', 'inline', 'nodismiss'].forEach(key => {
+  ['existing', 'paired', 'inline', 'nodismiss', 'labelx'].forEach(key => {
     const addBtn = document.getElementById('addBtn-' + key);
     addBtn.addEventListener('click', () => {
       const addBtnExpander = document.getElementById('addBtnExpander-' + key);
