@@ -410,9 +410,44 @@
     display: flex;
     align-items: center;
   }
+  .row--align-input .row__label-group { align-self: flex-start; }
   .row__label { display: flex; align-items: center; gap: 4px; color: var(--contentPrimary); }
   .row__label .tag { color: var(--contentPrimary); font-weight: 500; }
   .row__label .chev { color: var(--contentSecondary); }
+
+  .row__label-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 48px;
+  }
+  .row__label-group .row__label { height: auto; }
+  .trail-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+  }
+  .trail-check {
+    width: 16px; height: 16px;
+    accent-color: var(--contentPositive);
+    cursor: pointer;
+    margin: 0;
+  }
+  .trail-subtitle__text { color: var(--contentPrimary); }
+  .trail-subtitle__btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--contentSecondary);
+    padding: 0;
+    transition: color 150ms var(--ease-out);
+  }
+  .trail-subtitle__btn:hover { color: var(--contentPrimary); }
+  .trail-subtitle__val {
+    border-bottom: 1px dashed var(--contentSecondary);
+    padding-bottom: 1px;
+  }
 
   .field-col { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
   .helper-text { color: var(--contentSecondary); text-align: right; transition: color 150ms var(--ease-out); }
@@ -524,6 +559,27 @@
     border-radius: 0;
   }
   .add-sltgt__text {
+    border-bottom: 1px dashed var(--contentSecondary);
+    padding-bottom: 1px;
+  }
+
+  .add-single-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 16px;
+  }
+  .add-single {
+    margin: 0;
+    border-radius: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--contentSecondary);
+    transition: transform 120ms var(--ease-out), color 150ms var(--ease-out);
+  }
+  .add-single:active { transform: scale(0.97); }
+  .add-single:hover { color: var(--contentPrimary); }
+  .add-single__text {
     border-bottom: 1px dashed var(--contentSecondary);
     padding-bottom: 1px;
   }
@@ -777,7 +833,14 @@
                   <button class="remover__x" data-remove-field="sl-existing"><span class="mds-iconview mds-iconview--small"><i class="gh-standard-cancel-01"></i></span></button>
                 </div>
                 <div class="row">
-                  <div class="row__label body-large">Stoploss (SL)</div>
+                  <div class="row__label-group">
+                    <div class="row__label body-large">Stoploss (TSL)</div>
+                    <div class="trail-subtitle body-small">
+                      <input type="checkbox" class="trail-check" checked>
+                      <span class="trail-subtitle__text">Trail every</span>
+                      <button class="trail-subtitle__btn body-small-heavy"><span class="trail-subtitle__val">+₹2.00</span></button>
+                    </div>
+                  </div>
                   <div class="field-col">
                     <div class="oc-input" data-field="sl-existing" tabindex="0">
                       <span class="oc-input__value body-large-heavy">490</span>
@@ -789,6 +852,16 @@
                   <span class="est-pnl__label body-small">Est. loss</span>
                   <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
                   <button class="est-pnl__toggle" data-pnl-toggle="sl-existing"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
+                </div>
+              </div>
+            </div>
+            <div class="field-expander" id="addBackSl-existing">
+              <div class="field-expander__inner">
+                <div class="add-single-row">
+                  <button class="add-single mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" data-addback="sl-existing">
+                    <span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-add-01"></i></span>
+                    <span class="add-single__text">SL</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -815,6 +888,16 @@
                 </div>
               </div>
             </div>
+            <div class="field-expander" id="addBackTgt-existing">
+              <div class="field-expander__inner">
+                <div class="add-single-row">
+                  <button class="add-single mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" data-addback="tgt-existing">
+                    <span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-add-01"></i></span>
+                    <span class="add-single__text">TGT</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -836,18 +919,31 @@
                 <div class="field-expander" id="expander-sl-paired">
                   <div class="field-expander__inner">
                     <div class="paired-header">
-                      <span class="paired-label body-small-heavy">SL</span>
+                      <span class="paired-label body-small-heavy">TSL</span>
                       <button class="inline-x inline-x--xsmall" data-remove-field="sl-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
                     </div>
                     <div class="oc-input" data-field="sl-paired" tabindex="0">
                       <span class="oc-input__value body-large-heavy">490</span>
                       <span class="oc-input__cursor"></span>
                     </div>
+                    <div class="trail-subtitle body-small" style="padding:0;">
+                      <input type="checkbox" class="trail-check" checked>
+                      <span class="trail-subtitle__text">Trail</span>
+                      <button class="trail-subtitle__btn body-small-heavy"><span class="trail-subtitle__val">+₹2.00</span></button>
+                    </div>
                     <div class="est-pnl" data-pnl="sl-paired" style="justify-content:flex-start; padding:0;">
                       <span class="est-pnl__label body-small">Est. loss</span>
                       <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
                       <button class="est-pnl__toggle" data-pnl-toggle="sl-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                     </div>
+                  </div>
+                </div>
+                <div class="field-expander" id="addBackSl-paired">
+                  <div class="field-expander__inner">
+                    <button class="add-single mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" data-addback="sl-paired">
+                      <span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-add-01"></i></span>
+                      <span class="add-single__text">SL</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -867,6 +963,14 @@
                       <span class="est-pnl__value body-small-heavy">--</span>
                       <button class="est-pnl__toggle" data-pnl-toggle="tgt-paired"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                     </div>
+                  </div>
+                </div>
+                <div class="field-expander" id="addBackTgt-paired">
+                  <div class="field-expander__inner">
+                    <button class="add-single mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" data-addback="tgt-paired">
+                      <span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-add-01"></i></span>
+                      <span class="add-single__text">TGT</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -890,7 +994,14 @@
             <div class="field-expander" id="expander-sl-inline">
               <div class="field-expander__inner">
                 <div class="row row--align-input">
-                  <div class="row__label body-large">Stoploss (SL)</div>
+                  <div class="row__label-group">
+                    <div class="row__label body-large">Stoploss (TSL)</div>
+                    <div class="trail-subtitle body-small">
+                      <input type="checkbox" class="trail-check" checked>
+                      <span class="trail-subtitle__text">Trail every</span>
+                      <button class="trail-subtitle__btn body-small-heavy"><span class="trail-subtitle__val">+₹2.00</span></button>
+                    </div>
+                  </div>
                   <div class="field-col">
                     <div class="inline-field-group">
                       <div class="oc-input" data-field="sl-inline" tabindex="0">
@@ -907,6 +1018,16 @@
                       <button class="est-pnl__toggle" data-pnl-toggle="sl-inline"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+            <div class="field-expander" id="addBackSl-inline">
+              <div class="field-expander__inner">
+                <div class="add-single-row">
+                  <button class="add-single mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" data-addback="sl-inline">
+                    <span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-add-01"></i></span>
+                    <span class="add-single__text">SL</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -934,6 +1055,16 @@
                 </div>
               </div>
             </div>
+            <div class="field-expander" id="addBackTgt-inline">
+              <div class="field-expander__inner">
+                <div class="add-single-row">
+                  <button class="add-single mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" data-addback="tgt-inline">
+                    <span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-add-01"></i></span>
+                    <span class="add-single__text">TGT</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -953,7 +1084,14 @@
             <div class="field-expander" id="expander-sl-nodismiss">
               <div class="field-expander__inner">
                 <div class="row">
-                  <div class="row__label body-large">Stoploss (SL)</div>
+                  <div class="row__label-group">
+                    <div class="row__label body-large">Stoploss (TSL)</div>
+                    <div class="trail-subtitle body-small">
+                      <input type="checkbox" class="trail-check" checked>
+                      <span class="trail-subtitle__text">Trail every</span>
+                      <button class="trail-subtitle__btn body-small-heavy"><span class="trail-subtitle__val">+₹2.00</span></button>
+                    </div>
+                  </div>
                   <div class="field-col">
                     <div class="oc-input is-empty" data-field="sl-nodismiss" tabindex="0">
                       <span class="oc-input__value body-large-heavy"></span>
@@ -1006,10 +1144,17 @@
             <div class="field-expander" id="expander-sl-labelx">
               <div class="field-expander__inner">
                 <div class="row row--align-input">
-                  <div class="row__label body-large">
-                    <div class="label-with-x">
-                      <span>Stoploss (SL)</span>
-                      <button class="inline-x" data-remove-field="sl-labelx"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
+                  <div class="row__label-group">
+                    <div class="row__label body-large">
+                      <div class="label-with-x">
+                        <span>Stoploss (TSL)</span>
+                        <button class="inline-x" data-remove-field="sl-labelx"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-cancel-01"></i></span></button>
+                      </div>
+                    </div>
+                    <div class="trail-subtitle body-small">
+                      <input type="checkbox" class="trail-check" checked>
+                      <span class="trail-subtitle__text">Trail every</span>
+                      <button class="trail-subtitle__btn body-small-heavy"><span class="trail-subtitle__val">+₹2.00</span></button>
                     </div>
                   </div>
                   <div class="field-col">
@@ -1023,6 +1168,16 @@
                       <button class="est-pnl__toggle" data-pnl-toggle="sl-labelx"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+            <div class="field-expander" id="addBackSl-labelx">
+              <div class="field-expander__inner">
+                <div class="add-single-row">
+                  <button class="add-single mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" data-addback="sl-labelx">
+                    <span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-add-01"></i></span>
+                    <span class="add-single__text">SL</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -1047,6 +1202,16 @@
                       <button class="est-pnl__toggle" data-pnl-toggle="tgt-labelx"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+            <div class="field-expander" id="addBackTgt-labelx">
+              <div class="field-expander__inner">
+                <div class="add-single-row">
+                  <button class="add-single mds-btn mds-btn--tertiary mds-btn--small mds-btn--compact body-small-heavy" data-addback="tgt-labelx">
+                    <span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-add-01"></i></span>
+                    <span class="add-single__text">TGT</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -1154,29 +1319,29 @@
   });
 
   /* ---------- Add SL/TGT reveal (per-iteration) ---------- */
-  function updateAddBtnVisibility(iteration) {
+  function updateFieldVisibility(iteration) {
     const addBtnExpander = document.getElementById('addBtnExpander-' + iteration);
     const slExp = document.getElementById('expander-sl-' + iteration);
     const tgtExp = document.getElementById('expander-tgt-' + iteration);
-    if (!addBtnExpander) return;
+    const addBackSl = document.getElementById('addBackSl-' + iteration);
+    const addBackTgt = document.getElementById('addBackTgt-' + iteration);
     const slOpen = slExp && slExp.classList.contains('is-open');
     const tgtOpen = tgtExp && tgtExp.classList.contains('is-open');
-    if (slOpen || tgtOpen) {
-      addBtnExpander.classList.remove('is-open');
-    } else {
-      addBtnExpander.classList.add('is-open');
+    if (addBtnExpander) {
+      addBtnExpander.classList.toggle('is-open', !slOpen && !tgtOpen);
     }
+    if (addBackSl) addBackSl.classList.toggle('is-open', !slOpen && tgtOpen);
+    if (addBackTgt) addBackTgt.classList.toggle('is-open', slOpen && !tgtOpen);
   }
 
   ['existing', 'paired', 'inline', 'nodismiss', 'labelx'].forEach(key => {
     const addBtn = document.getElementById('addBtn-' + key);
     addBtn.addEventListener('click', () => {
-      const addBtnExpander = document.getElementById('addBtnExpander-' + key);
       const slExp = document.getElementById('expander-sl-' + key);
       const tgtExp = document.getElementById('expander-tgt-' + key);
-      if (addBtnExpander) addBtnExpander.classList.remove('is-open');
       if (slExp) slExp.classList.add('is-open');
       if (tgtExp) tgtExp.classList.add('is-open');
+      updateFieldVisibility(key);
       const screenBody = addBtn.closest('.screen-body');
       if (screenBody) {
         setTimeout(() => {
@@ -1198,7 +1363,17 @@
         if (alsoExp) alsoExp.classList.remove('is-open');
       }
       const iteration = fieldKey.split('-').pop();
-      updateAddBtnVisibility(iteration);
+      updateFieldVisibility(iteration);
+    });
+  });
+
+  document.querySelectorAll('[data-addback]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const fieldKey = btn.dataset.addback;
+      const expander = document.getElementById('expander-' + fieldKey);
+      if (expander) expander.classList.add('is-open');
+      const iteration = fieldKey.split('-').pop();
+      updateFieldVisibility(iteration);
     });
   });
 
