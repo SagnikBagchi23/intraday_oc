@@ -556,7 +556,7 @@
   .input-x:active { transform: scale(0.85); }
 
   /* ---- Iteration content sections ---- */
-  .sltgt-section { display: flex; flex-direction: column; gap: 16px; padding-bottom: 12px; }
+  .sltgt-section { display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; }
   .sltgt-section > .field-expander:first-child > .field-expander__inner { padding-top: 16px; }
 
   /* bottom dock */
@@ -908,6 +908,7 @@
       if (expander) expander.classList.add('is-open');
       const iteration = fieldKey.split('-').pop();
       updateFieldVisibility(iteration);
+      openNumpad(fieldKey);
     });
   });
 
