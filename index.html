@@ -8,6 +8,10 @@
 <!-- 1. Icon stylesheet -->
 <link rel="stylesheet" href="fonts/groww-huge-standard.css">
 
+<!-- DialKit (dev-only tuning panel for SL/TGT reveal animation) -->
+<link rel="stylesheet" href="https://unpkg.com/dialkit@2.0.2/dist/vanilla/styles.css">
+<script src="https://unpkg.com/dialkit@2.0.2/dist/vanilla/browser.global.js"></script>
+
 <!-- 2. Fonts + tokens -->
 <style>
   @font-face {
@@ -164,7 +168,6 @@
     color: var(--contentOnColour);
     border: none;
   }
-  .mds-btn--primary:hover  { background: var(--backgroundAccentHover); }
   .mds-btn--primary:active { background: var(--backgroundAccentPressed); }
   .mds-btn--primary:disabled {
     background: var(--backgroundDisabled);
@@ -176,7 +179,6 @@
     color: var(--contentOnColour);
     border: none;
   }
-  .mds-btn--primary-negative:hover  { background: var(--backgroundNegativeHover); }
   .mds-btn--primary-negative:active { background: var(--backgroundNegativePressed); }
   .mds-btn--primary-negative:disabled {
     background: var(--backgroundDisabled);
@@ -188,7 +190,6 @@
     color: var(--contentPrimary);
     border: 1px solid var(--borderPrimary);
   }
-  .mds-btn--secondary:hover  { background: var(--backgroundSurfaceZ1); }
   .mds-btn--secondary:active { background: var(--backgroundSurfaceZ2); }
   .mds-btn--secondary:disabled {
     background: var(--backgroundDisabled);
@@ -207,7 +208,6 @@
     border: none;
   }
   .mds-btn--tertiary.mds-btn--muted { color: var(--contentSecondary); }
-  .mds-btn--tertiary:hover, .mds-btn--tertiary-accent:hover { opacity: 0.8; }
   .mds-btn--tertiary:disabled, .mds-btn--tertiary-accent:disabled {
     background: var(--backgroundDisabled);
     color: var(--contentDisabled);
@@ -353,20 +353,25 @@
     justify-content: center;
     width: 16px; height: 16px;
     padding: 0;
-    border: none;
+    border: 1.5px solid var(--contentSecondary);
+    border-radius: 4px;
     background: none;
     cursor: pointer;
     flex-shrink: 0;
     line-height: 1;
+    transition: background 150ms var(--ease-out), border-color 150ms var(--ease-out);
+  }
+  .trail-check.is-checked {
+    border-color: var(--backgroundAccent);
+    background: var(--backgroundAccent);
   }
   .trail-check__icon {
-    font-size: 16px;
+    font-size: 11px;
     line-height: 1;
+    color: var(--contentOnColour, #fff);
+    display: none;
   }
-  .trail-check__icon--off { color: var(--contentSecondary); display: inline-block; }
-  .trail-check__icon--on { color: var(--contentAccent); display: none; }
-  .trail-check.is-checked .trail-check__icon--off { display: none; }
-  .trail-check.is-checked .trail-check__icon--on { display: inline-block; }
+  .trail-check.is-checked .trail-check__icon { display: inline-block; }
   .trail-subtitle__text { color: var(--contentPrimary); }
   .trail-subtitle__btn {
     background: none;
@@ -376,7 +381,6 @@
     padding: 0;
     transition: color 150ms var(--ease-out);
   }
-  .trail-subtitle__btn:hover { color: var(--contentPrimary); }
   .trail-subtitle__val {
     border-bottom: 1px dashed var(--contentSecondary);
     padding-bottom: 1px;
@@ -407,8 +411,6 @@
     background: none; border: none; padding: 0;
     transition: color 150ms var(--ease-out);
   }
-  .est-pnl__toggle:hover { color: var(--contentPrimary); }
-
   /* ---- oc-input-field ---- */
   .oc-input {
     display: inline-flex;
@@ -479,7 +481,6 @@
     transition: transform 120ms var(--ease-out), color 150ms var(--ease-out);
   }
   .remover__x:active { transform: scale(0.85); }
-  .remover__x:hover { color: var(--contentPrimary); }
 
   /* add SL/TGT trigger button (Tertiary Medium, hug content, right-aligned) */
   .add-sltgt-row {
@@ -511,7 +512,6 @@
     transition: transform 120ms var(--ease-out), color 150ms var(--ease-out);
   }
   .add-single:active { transform: scale(0.97); }
-  .add-single:hover { color: var(--contentPrimary); }
   .add-single__text {
     border-bottom: 1px dashed var(--contentSecondary);
     padding-bottom: 1px;
@@ -521,9 +521,15 @@
   .field-expander {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 200ms var(--ease-out);
+    opacity: 0;
+    transition:
+      grid-template-rows var(--expander-duration, 200ms) var(--expander-ease, cubic-bezier(0.23, 1, 0.32, 1)),
+      opacity var(--expander-opacity-duration, 200ms) var(--expander-ease, cubic-bezier(0.23, 1, 0.32, 1));
   }
-  .field-expander.is-open { grid-template-rows: 1fr; }
+  .field-expander.is-open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
   .field-expander__inner { overflow: hidden; min-height: 0; }
   .paired-col .field-expander__inner { display: flex; flex-direction: column; gap: 6px; }
 
@@ -548,7 +554,6 @@
     transition: transform 120ms var(--ease-out), color 150ms var(--ease-out);
   }
   .input-x:active { transform: scale(0.85); }
-  .input-x:hover { color: var(--contentPrimary); }
 
   /* ---- Iteration content sections ---- */
   .sltgt-section { display: flex; flex-direction: column; gap: 16px; padding-bottom: 12px; }
@@ -708,23 +713,22 @@
                     <div class="row__label body-large">Stoploss (TSL)</div>
                     <div class="trail-subtitle body-small">
                       <button type="button" class="trail-check is-checked" id="trailCheck" role="checkbox" aria-checked="true">
-                        <i class="gh-standard-square trail-check__icon trail-check__icon--off"></i>
-                        <i class="gh-standard-checkmark-square-02 trail-check__icon trail-check__icon--on"></i>
+                        <i class="gh-standard-tick-02 trail-check__icon"></i>
                       </button>
                       <span class="trail-subtitle__text">Trail every</span>
                       <button class="trail-subtitle__btn body-small-heavy"><span class="trail-subtitle__val">+₹2.00</span></button>
                     </div>
                   </div>
                   <div class="field-col">
-                    <div class="oc-input" data-field="sl-existing" tabindex="0">
-                      <span class="oc-input__value body-large-heavy">490</span>
+                    <div class="oc-input is-empty" data-field="sl-existing" tabindex="0">
+                      <span class="oc-input__value body-large-heavy"></span>
                       <span class="oc-input__cursor"></span>
                     </div>
                   </div>
                 </div>
                 <div class="est-pnl" data-pnl="sl-existing">
                   <span class="est-pnl__label body-small">Est. loss</span>
-                  <span class="est-pnl__value body-small-heavy is-loss">-₹2,000</span>
+                  <span class="est-pnl__value body-small-heavy">--</span>
                   <button class="est-pnl__toggle" data-pnl-toggle="sl-existing"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                 </div>
               </div>
@@ -864,14 +868,19 @@
     addBtn.addEventListener('click', () => {
       const slExp = document.getElementById('expander-sl-' + key);
       const tgtExp = document.getElementById('expander-tgt-' + key);
+      const stagger = (window.__sltgtAnim && window.__sltgtAnim.stagger) || 0;
+      const duration = (window.__sltgtAnim && window.__sltgtAnim.duration) || 200;
       if (slExp) slExp.classList.add('is-open');
-      if (tgtExp) tgtExp.classList.add('is-open');
       updateFieldVisibility(key);
+      setTimeout(() => {
+        if (tgtExp) tgtExp.classList.add('is-open');
+        updateFieldVisibility(key);
+      }, stagger);
       const screenBody = addBtn.closest('.screen-body');
       if (screenBody) {
         setTimeout(() => {
           screenBody.scrollTo({ top: screenBody.scrollHeight, behavior: 'smooth' });
-        }, 220);
+        }, stagger + duration + 20);
       }
     });
   });
@@ -934,7 +943,7 @@
   const fieldValues = {
     'qty': '200',
     'price': '498',
-    'sl-existing': '490',
+    'sl-existing': '',
     'tgt-existing': ''
   };
 
@@ -975,7 +984,7 @@
   }
 
   /* ---------- Est. P&L below SL/TGT ---------- */
-  const pnlViewMode = {};
+  let pnlViewMode = 'pnl';
 
   function updateEstPnl(fieldKey) {
     const pnlEl = document.querySelector('[data-pnl="' + fieldKey + '"]');
@@ -1029,7 +1038,7 @@
     const pnlAbs = diff * qty;
     const pnlPct = price > 0 ? (diff / price) * 100 : 0;
 
-    const mode = pnlViewMode[fieldKey] || 'pnl';
+    const mode = pnlViewMode;
 
     if (mode === 'pct') {
       labelEl.textContent = '';
@@ -1058,9 +1067,8 @@
   document.addEventListener('click', function(e) {
     const row = e.target.closest('[data-pnl]');
     if (!row) return;
-    const key = row.getAttribute('data-pnl');
-    pnlViewMode[key] = pnlViewMode[key] === 'pct' ? 'pnl' : 'pct';
-    updateEstPnl(key);
+    pnlViewMode = pnlViewMode === 'pct' ? 'pnl' : 'pct';
+    updateAllPnl();
   });
 
   /* ---------- Live market ticking ---------- */
@@ -1172,6 +1180,74 @@
   revalidateAll();
   updateMargin();
   openNumpad('price');
+})();
+</script>
+
+<!-- ============ SL/TGT reveal animation controls (DialKit) ============ -->
+<script>
+(function () {
+  if (!window.DialKit) return;
+
+  var root = DialKit.createDialRoot({ position: 'top-right', theme: 'dark' });
+
+  var app = document.querySelector('.app');
+
+  function apply(values) {
+    var durationMs = values.duration;
+    var curve = values.ease;
+    var cssEase = curve.type === 'easing'
+      ? 'cubic-bezier(' + curve.ease.join(',') + ')'
+      : 'cubic-bezier(0.23,1,0.32,1)';
+    var cssDurationSec = curve.type === 'easing' ? curve.duration : durationMs / 1000;
+
+    app.style.setProperty('--expander-duration', durationMs + 'ms');
+    app.style.setProperty('--expander-opacity-duration', (durationMs * 0.75) + 'ms');
+    app.style.setProperty('--expander-ease', cssEase);
+
+    window.__sltgtAnim = { duration: cssDurationSec * 1000, stagger: values.stagger };
+  }
+
+  function collapseAll() {
+    ['expander-sl-existing', 'expander-tgt-existing'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.remove('is-open');
+    });
+    var addBtnExpander = document.getElementById('addBtnExpander-existing');
+    var addBackSl = document.getElementById('addBackSl-existing');
+    var addBackTgt = document.getElementById('addBackTgt-existing');
+    if (addBtnExpander) addBtnExpander.classList.add('is-open');
+    if (addBackSl) addBackSl.classList.remove('is-open');
+    if (addBackTgt) addBackTgt.classList.remove('is-open');
+  }
+
+  function replay() {
+    collapseAll();
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        var addBtn = document.getElementById('addBtn-existing');
+        if (addBtn) addBtn.click();
+      });
+    });
+  }
+
+  var kit = DialKit.createDialKit('SL/TGT Reveal', {
+    duration: [200, 60, 600, 10],
+    stagger: [90, 0, 400, 10],
+    ease: {
+      type: 'easing',
+      duration: 0.2,
+      ease: [0.23, 1, 0.32, 1],
+    },
+    replay: { type: 'action', label: 'Replay reveal' },
+  }, {
+    id: 'sltgt-reveal',
+    persist: true,
+    onAction: function (action) {
+      if (action === 'replay') replay();
+    },
+  });
+
+  kit.subscribe(apply);
 })();
 </script>
 
