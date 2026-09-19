@@ -556,7 +556,7 @@
   .input-x:active { transform: scale(0.85); }
 
   /* ---- Iteration content sections ---- */
-  .sltgt-section { display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; }
+  .sltgt-section { display: flex; flex-direction: column; gap: 8px; padding-bottom: 12px; }
   .sltgt-section > .field-expander:first-child > .field-expander__inner { padding-top: 16px; }
 
   /* bottom dock */
@@ -872,6 +872,7 @@
       const duration = (window.__sltgtAnim && window.__sltgtAnim.duration) || 200;
       if (slExp) slExp.classList.add('is-open');
       updateFieldVisibility(key);
+      openNumpad('sl-' + key);
       setTimeout(() => {
         if (tgtExp) tgtExp.classList.add('is-open');
         updateFieldVisibility(key);
