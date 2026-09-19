@@ -919,7 +919,7 @@
 
   function updateMargin() {
     const leverage = leverageSteps[leverageIdx];
-    marginBtn.textContent = 'Margin (' + leverage + 'x)';
+    marginBtn.textContent = 'Margin (' + leverage + 'x):';
     const qty = parseFloat(fieldValues.qty) || 0;
     const price = parseFloat(fieldValues.price) || 0;
     const margin = Math.round((qty * price) / leverage);
