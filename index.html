@@ -584,6 +584,35 @@
   .sltgt-section { display: flex; flex-direction: column; gap: 8px; padding-bottom: 12px; }
   .sltgt-section > .field-expander:first-child > .field-expander__inner { padding-top: 16px; }
 
+  /* error banner above dock */
+  .error-banner {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 16px 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--backgroundNegativeSubtle);
+    color: var(--contentOnNegativeSubtle);
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 500;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 180ms var(--ease-out), transform 180ms var(--ease-out);
+  }
+  .error-banner.is-entering {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  .error-banner.is-leaving {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .error-banner { transition: none !important; }
+  }
+
   /* bottom dock */
   .dock { flex-shrink: 0; border-top: 1px solid var(--borderPrimary); }
   .dock__balance {
@@ -808,6 +837,7 @@
 
       <!-- Bottom dock -->
       <div class="dock">
+        <div class="error-banner" id="errorBanner"></div>
         <div class="dock__balance">
           <span class="lbl body-small">Balance: ₹1,00,000</span>
           <div class="margin-group">
@@ -1012,6 +1042,60 @@
 
   /* ---------- Est. P&L below SL/TGT ---------- */
   let pnlViewMode = 'pnl';
+  let errorDebounceTimer = null;
+  const pendingErrors = {};
+  let errorBannerHideTimer = null;
+
+  function showErrorBanner(msg) {
+    const banner = document.getElementById('errorBanner');
+    if (errorBannerHideTimer) { clearTimeout(errorBannerHideTimer); errorBannerHideTimer = null; }
+    banner.textContent = msg;
+    banner.classList.remove('is-leaving');
+    banner.classList.add('is-entering');
+    banner.style.display = 'flex';
+    requestAnimationFrame(function() { requestAnimationFrame(function() {
+      banner.classList.remove('is-entering');
+    }); });
+  }
+
+  function hideErrorBanner() {
+    const banner = document.getElementById('errorBanner');
+    if (banner.style.display === 'none' || banner.style.display === '') return;
+    banner.classList.add('is-leaving');
+    errorBannerHideTimer = setTimeout(function() {
+      banner.style.display = 'none';
+      banner.classList.remove('is-leaving');
+      errorBannerHideTimer = null;
+    }, 180);
+  }
+
+  function clearPendingErrors() {
+    if (errorDebounceTimer) { clearTimeout(errorDebounceTimer); errorDebounceTimer = null; }
+    for (var k in pendingErrors) delete pendingErrors[k];
+    document.querySelectorAll('.oc-input.is-error').forEach(function(el) {
+      el.classList.remove('is-error');
+    });
+    hideErrorBanner();
+    updateCtaState();
+  }
+
+  function flushPendingErrors() {
+    var messages = [];
+    for (var fieldKey in pendingErrors) {
+      var inputEl = document.querySelector('[data-field="' + fieldKey + '"]');
+      if (inputEl) inputEl.classList.add('is-error');
+      messages.push(pendingErrors[fieldKey]);
+    }
+    if (messages.length > 0) {
+      showErrorBanner(messages.join(' · '));
+      updateCtaState();
+    }
+  }
+
+  function schedulePendingErrors() {
+    if (errorDebounceTimer) clearTimeout(errorDebounceTimer);
+    errorDebounceTimer = setTimeout(flushPendingErrors, 1000);
+  }
 
   function updateEstPnl(fieldKey) {
     const pnlEl = document.querySelector('[data-pnl="' + fieldKey + '"]');
@@ -1029,6 +1113,7 @@
     if (inputEl) inputEl.classList.remove('is-warning', 'is-error');
 
     if (isNaN(val) || val === 0 || qty === 0) {
+      delete pendingErrors[fieldKey];
       labelEl.textContent = kind === 'sl' ? 'Est. loss' : 'Est. profit';
       valueEl.textContent = '--';
       valueEl.classList.remove('is-loss', 'is-profit');
@@ -1036,25 +1121,27 @@
       return;
     }
 
-    if (kind === 'sl' && val >= LTP && inputEl) {
-      labelEl.textContent = '';
-      valueEl.textContent = 'Stoploss must be below LTP (₹' + LTP.toFixed(2) + ')';
+    if (kind === 'sl' && val >= LTP) {
+      pendingErrors[fieldKey] = 'Stoploss must be below LTP (₹' + LTP.toFixed(2) + ')';
+      labelEl.textContent = 'Est. loss';
+      valueEl.textContent = '--';
       valueEl.classList.remove('is-loss', 'is-profit');
-      valueEl.classList.add('is-loss');
-      inputEl.classList.add('is-error');
       pnlEl.style.display = '';
+      schedulePendingErrors();
       return;
     }
 
-    if (kind === 'tgt' && val <= LTP && inputEl) {
-      labelEl.textContent = '';
-      valueEl.textContent = 'Target must be above LTP (₹' + LTP.toFixed(2) + ')';
+    if (kind === 'tgt' && val <= LTP) {
+      pendingErrors[fieldKey] = 'Target must be above LTP (₹' + LTP.toFixed(2) + ')';
+      labelEl.textContent = 'Est. profit';
+      valueEl.textContent = '--';
       valueEl.classList.remove('is-loss', 'is-profit');
-      valueEl.classList.add('is-loss');
-      inputEl.classList.add('is-error');
       pnlEl.style.display = '';
+      schedulePendingErrors();
       return;
     }
+
+    delete pendingErrors[fieldKey];
 
     const diffFromMkt = ((val - LTP) / LTP) * 100;
     if (Math.abs(diffFromMkt) < 0.5 && inputEl) {
@@ -1120,7 +1207,9 @@
     var qty = parseFloat(fieldValues.qty) || 0;
     var price = parseFloat(fieldValues.price) || LTP;
 
-    if (isNaN(val) || val === 0 || qty === 0) {
+    if (isNaN(val) || val === 0 || qty === 0
+        || (kind === 'sl' && val >= LTP)
+        || (kind === 'tgt' && val <= LTP)) {
       labelEl.textContent = kind === 'sl' ? 'Est. loss' : 'Est. profit';
       valueEl.textContent = '--';
       valueEl.className = 'est-pnl__value body-small-heavy';
@@ -1192,6 +1281,7 @@
     const valueSpan = field.querySelector('.oc-input__value');
     valueSpan.textContent = val;
     field.classList.toggle('is-empty', !val);
+    clearPendingErrors();
     validateAndRender(key, fieldKind(key), val);
     updateAllPnl();
     updateCtaState();
