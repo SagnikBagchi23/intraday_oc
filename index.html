@@ -401,9 +401,34 @@
     cursor: pointer;
   }
   .est-pnl__label { color: var(--contentSecondary); }
-  .est-pnl__value { color: var(--contentSecondary); }
+  .est-pnl__value-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .est-pnl__value {
+    color: var(--contentSecondary);
+    white-space: nowrap;
+    transition: opacity 180ms var(--ease-out), filter 180ms var(--ease-out), transform 180ms var(--ease-out);
+  }
   .est-pnl__value.is-loss { color: var(--contentNegative); }
   .est-pnl__value.is-profit { color: var(--contentPositive); }
+  .est-pnl__value.is-leaving {
+    position: absolute;
+    right: 0;
+    opacity: 0;
+    filter: blur(2px);
+    transform: scale(0.97);
+  }
+  .est-pnl__value.is-entering {
+    opacity: 0;
+    filter: blur(2px);
+    transform: scale(0.97);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .est-pnl__value { transition: none !important; }
+  }
   .est-pnl__toggle {
     display: inline-flex; align-items: center; justify-content: center;
     width: 12px; height: 12px; font-size: 12px;
@@ -728,7 +753,7 @@
                 </div>
                 <div class="est-pnl" data-pnl="sl-existing">
                   <span class="est-pnl__label body-small">Est. loss</span>
-                  <span class="est-pnl__value body-small-heavy">--</span>
+                  <span class="est-pnl__value-wrap"><span class="est-pnl__value body-small-heavy">--</span></span>
                   <button class="est-pnl__toggle" data-pnl-toggle="sl-existing"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                 </div>
               </div>
@@ -761,7 +786,7 @@
                 </div>
                 <div class="est-pnl" data-pnl="tgt-existing">
                   <span class="est-pnl__label body-small">Est. profit</span>
-                  <span class="est-pnl__value body-small-heavy">--</span>
+                  <span class="est-pnl__value-wrap"><span class="est-pnl__value body-small-heavy">--</span></span>
                   <button class="est-pnl__toggle" data-pnl-toggle="tgt-existing"><span class="mds-iconview mds-iconview--xsmall"><i class="gh-standard-unfold-more"></i></span></button>
                 </div>
               </div>
@@ -999,7 +1024,7 @@
     const price = parseFloat(fieldValues.price) || LTP;
 
     const labelEl = pnlEl.querySelector('.est-pnl__label');
-    const valueEl = pnlEl.querySelector('.est-pnl__value');
+    const valueEl = pnlEl.querySelector('.est-pnl__value:not(.is-leaving)');
 
     if (inputEl) inputEl.classList.remove('is-warning', 'is-error');
 
@@ -1066,11 +1091,69 @@
     ['sl-existing', 'tgt-existing'].forEach(updateEstPnl);
   }
 
+  function crossfadePnl() {
+    document.querySelectorAll('.est-pnl__value-wrap').forEach(function(wrap) {
+      var outgoing = wrap.querySelector('.est-pnl__value:not(.is-leaving)');
+      if (!outgoing) return;
+
+      var incoming = outgoing.cloneNode(false);
+      incoming.className = outgoing.className;
+      incoming.classList.add('is-entering');
+      wrap.appendChild(incoming);
+
+      outgoing.classList.add('is-leaving');
+
+      var fieldKey = wrap.closest('[data-pnl]').dataset.pnl;
+      applyPnlContent(fieldKey, incoming, wrap.closest('[data-pnl]').querySelector('.est-pnl__label'));
+
+      requestAnimationFrame(function() { requestAnimationFrame(function() {
+        incoming.classList.remove('is-entering');
+      }); });
+
+      setTimeout(function() { outgoing.remove(); }, 180);
+    });
+  }
+
+  function applyPnlContent(fieldKey, valueEl, labelEl) {
+    var kind = fieldKey.startsWith('sl') ? 'sl' : 'tgt';
+    var val = parseFloat(fieldValues[fieldKey]);
+    var qty = parseFloat(fieldValues.qty) || 0;
+    var price = parseFloat(fieldValues.price) || LTP;
+
+    if (isNaN(val) || val === 0 || qty === 0) {
+      labelEl.textContent = kind === 'sl' ? 'Est. loss' : 'Est. profit';
+      valueEl.textContent = '--';
+      valueEl.className = 'est-pnl__value body-small-heavy';
+      return;
+    }
+
+    var diffFromMkt = ((val - LTP) / LTP) * 100;
+    var diff = val - price;
+    var pnlAbs = diff * qty;
+
+    if (pnlViewMode === 'pct') {
+      labelEl.textContent = '';
+      var sign = diffFromMkt >= 0 ? '+' : '';
+      valueEl.textContent = sign + diffFromMkt.toFixed(2) + '% from market';
+      valueEl.className = 'est-pnl__value body-small';
+    } else {
+      var isLoss = pnlAbs < 0;
+      var isProfit = pnlAbs > 0;
+      labelEl.textContent = isLoss ? 'Est. loss' : isProfit ? 'Est. profit' : 'Est. P&L';
+      var absPnl = Math.abs(Math.round(pnlAbs));
+      var formatted = absPnl.toLocaleString('en-IN');
+      valueEl.textContent = (pnlAbs < 0 ? '-' : '+') + '₹' + formatted;
+      valueEl.className = 'est-pnl__value body-small-heavy';
+      if (isLoss) valueEl.classList.add('is-loss');
+      else if (isProfit) valueEl.classList.add('is-profit');
+    }
+  }
+
   document.addEventListener('click', function(e) {
-    const row = e.target.closest('[data-pnl]');
+    var row = e.target.closest('[data-pnl]');
     if (!row) return;
     pnlViewMode = pnlViewMode === 'pct' ? 'pnl' : 'pct';
-    updateAllPnl();
+    crossfadePnl();
   });
 
   /* ---------- Live market ticking ---------- */

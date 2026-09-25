@@ -1,0 +1,636 @@
+<title>Intraday Order Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --phone-blue: #394F6E;
+    --phone-blue-light: #4A6380;
+    --phone-blue-dark: #2E3F58;
+    --phone-bezel: #1A1A1E;
+    --phone-screen-radius: 54px;
+    --phone-body-radius: 58px;
+
+    --bg-page: #F0F1F3;
+    --bg-page-grad: radial-gradient(ellipse 120% 80% at 50% 30%, #E8ECF0, #F0F1F3);
+    --text-page: #2A2D32;
+    --text-muted: #8A8E94;
+
+    /* Groww dark tokens */
+    --g-bg: #060809;
+    --g-surface: #101314;
+    --g-surface2: #1A1D1F;
+    --g-border: #252A2C;
+    --g-text: #F2F5F7;
+    --g-text2: #989EA0;
+    --g-text3: #6E7274;
+    --g-accent: #04B488;
+    --g-negative: #ED5533;
+    --g-disabled: #4A4E50;
+
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg-page: #111214;
+      --bg-page-grad: radial-gradient(ellipse 120% 80% at 50% 30%, #1A1C20, #111214);
+      --text-page: #E2E4E8;
+      --text-muted: #6A6E74;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg-page: #111214;
+    --bg-page-grad: radial-gradient(ellipse 120% 80% at 50% 30%, #1A1C20, #111214);
+    --text-page: #E2E4E8;
+    --text-muted: #6A6E74;
+  }
+
+  body {
+    background: var(--bg-page-grad);
+    font-family: 'Inter', -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 16px;
+    gap: 32px;
+  }
+
+  /* ---- iPhone 18 Pro frame ---- */
+  .phone {
+    position: relative;
+    width: 375px;
+    height: 812px;
+    border-radius: var(--phone-body-radius);
+    background: linear-gradient(165deg, var(--phone-blue-light) 0%, var(--phone-blue) 40%, var(--phone-blue-dark) 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,0.12),
+      inset 0 1px 0 rgba(255,255,255,0.18),
+      0 40px 80px rgba(0,0,0,0.35),
+      0 12px 24px rgba(0,0,0,0.2);
+    padding: 10px;
+  }
+
+  /* titanium edge highlight */
+  .phone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--phone-body-radius);
+    background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.06) 100%);
+    pointer-events: none;
+  }
+
+  /* side buttons */
+  .phone::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 160px;
+    width: 3px;
+    height: 64px;
+    border-radius: 0 2px 2px 0;
+    background: linear-gradient(180deg, var(--phone-blue-light), var(--phone-blue-dark));
+    box-shadow: 0 68px 0 0 var(--phone-blue), 0 -44px 0 0 var(--phone-blue);
+  }
+
+  /* volume buttons */
+  .vol-buttons {
+    position: absolute;
+    left: -2px;
+    top: 180px;
+    width: 3px;
+    height: 44px;
+    border-radius: 2px 0 0 2px;
+    background: linear-gradient(180deg, var(--phone-blue-light), var(--phone-blue-dark));
+    box-shadow: 0 54px 0 0 var(--phone-blue);
+  }
+
+  .phone-screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--phone-screen-radius);
+    background: var(--g-bg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Dynamic Island */
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 124px;
+    height: 36px;
+    border-radius: 20px;
+    background: #000;
+    z-index: 10;
+  }
+
+  /* ---- Status bar ---- */
+  .statusbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 28px 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    flex-shrink: 0;
+    z-index: 5;
+  }
+  .statusbar .icons { display: flex; gap: 6px; align-items: center; }
+
+  /* ---- App bar ---- */
+  .appbar {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px 10px;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .appbar-back {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--g-text);
+    flex-shrink: 0;
+  }
+  .appbar-content { flex: 1; min-width: 0; }
+  .appbar-title {
+    font-size: 16px; font-weight: 600; color: var(--g-text);
+    line-height: 1.3;
+  }
+  .appbar-sub {
+    font-size: 12px; color: var(--g-text2); line-height: 1.4;
+  }
+  .appbar-sub .positive { color: var(--g-accent); }
+
+  /* ---- Screen body ---- */
+  .screen-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 0 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ---- Product pills ---- */
+  .pills {
+    display: flex; gap: 8px; padding: 4px 16px 12px;
+  }
+  .pill {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--g-border);
+    background: transparent;
+    color: var(--g-text2);
+    font-size: 12px; font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 150ms var(--ease-out), color 150ms var(--ease-out), border-color 150ms var(--ease-out);
+  }
+  .pill:active { transform: scale(0.97); }
+  .pill.is-active {
+    background: var(--g-surface2);
+    color: var(--g-text);
+    border-color: var(--g-text3);
+  }
+
+  /* ---- Rows ---- */
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+  }
+  .row-label {
+    font-size: 16px; color: var(--g-text);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tag {
+    font-size: 14px; font-weight: 500;
+    color: var(--g-accent);
+    margin-left: 2px;
+  }
+  .chev { color: var(--g-text3); font-size: 14px; }
+  .oc-input {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 120px;
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid var(--g-border);
+    font-size: 16px; font-weight: 500;
+    color: var(--g-text);
+  }
+  .oc-input.is-empty {
+    border-style: dashed;
+  }
+  .oc-input .cursor {
+    width: 2px; height: 20px;
+    background: var(--g-accent);
+    border-radius: 1px;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .helper {
+    font-size: 12px; color: var(--g-text2);
+    text-align: right;
+    padding: 2px 0 0;
+  }
+  .field-col {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+  }
+
+  /* ---- Divider ---- */
+  .divider {
+    height: 1px;
+    background: var(--g-border);
+    margin: 2px 16px;
+  }
+
+  /* ---- SL/TGT section ---- */
+  .sl-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 10px 16px;
+  }
+  .sl-label-group { display: flex; flex-direction: column; gap: 4px; }
+  .trail-sub {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--g-text2);
+  }
+  .trail-check {
+    width: 14px; height: 14px;
+    border-radius: 4px;
+    border: 1.5px solid var(--g-accent);
+    background: var(--g-accent);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+  .trail-val {
+    color: var(--g-accent);
+    font-weight: 500;
+  }
+  .remove-btn {
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: none;
+    color: var(--g-text3);
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  /* ---- Est. P&L row ---- */
+  .est-pnl {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    padding: 0 16px 2px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .est-pnl__label {
+    color: var(--g-text2);
+    font-size: 12px;
+  }
+  .est-pnl__value-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .est-pnl__value {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--g-text2);
+    white-space: nowrap;
+    transition: opacity 180ms var(--ease-out), filter 180ms var(--ease-out), transform 180ms var(--ease-out);
+  }
+  .est-pnl__value.is-loss { color: var(--g-negative); }
+  .est-pnl__value.is-profit { color: var(--g-accent); }
+  .est-pnl__value.is-leaving {
+    position: absolute;
+    right: 0;
+    opacity: 0;
+    filter: blur(2px);
+    transform: scale(0.97);
+  }
+  .est-pnl__value.is-entering {
+    opacity: 0;
+    filter: blur(2px);
+    transform: scale(0.97);
+  }
+  .est-pnl__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px; height: 12px;
+    color: var(--g-text3);
+    background: none; border: none; padding: 0;
+    cursor: pointer;
+    transition: color 150ms var(--ease-out);
+  }
+  .est-pnl:hover .est-pnl__toggle { color: var(--g-text2); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .est-pnl__value { transition: none !important; }
+  }
+
+  /* ---- Dock ---- */
+  .dock {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-top: 1px solid var(--g-border);
+    background: var(--g-bg);
+  }
+  .dock-balance {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--g-text2);
+    padding-bottom: 10px;
+  }
+  .dock-margin { display: flex; gap: 4px; }
+  .cta {
+    width: 100%;
+    height: 48px;
+    border-radius: 8px;
+    border: none;
+    background: var(--g-accent);
+    color: #fff;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 140ms var(--ease-out), background 150ms var(--ease-out);
+  }
+  .cta:active { transform: scale(0.97); background: #039470; }
+
+  /* ---- Numpad ---- */
+  .numpad {
+    flex-shrink: 0;
+    padding: 8px 16px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .numpad-row { display: flex; gap: 6px; }
+  .numpad-key {
+    flex: 1;
+    height: 50px;
+    border: none;
+    border-radius: 12px;
+    background: none;
+    color: var(--g-text);
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 120ms var(--ease-out), background 150ms var(--ease-out);
+  }
+  .numpad-key:active { transform: scale(0.92); background: var(--g-surface); }
+
+  /* ---- Home indicator ---- */
+  .home-indicator {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0 6px;
+    flex-shrink: 0;
+  }
+  .home-indicator span {
+    width: 134px;
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* ---- Caption below phone ---- */
+  .caption {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 340px;
+  }
+  .caption strong {
+    color: var(--text-page);
+    font-weight: 600;
+  }
+
+  /* Responsive */
+  @media (max-width: 420px) {
+    .phone {
+      width: 100%;
+      max-width: 355px;
+      height: auto;
+      aspect-ratio: 375 / 812;
+    }
+  }
+</style>
+
+<div class="phone">
+  <div class="vol-buttons"></div>
+  <div class="phone-screen">
+    <div class="dynamic-island"></div>
+
+    <!-- Status bar -->
+    <div class="statusbar">
+      <div>12:30</div>
+      <div class="icons">
+        <svg width="16" height="11" viewBox="0 0 19 12" fill="none"><path d="M9.5 2.4C12.1 2.4 14.5 3.4 16.3 5.1L17.9 3.4C15.6 1.3 12.7 0 9.5 0C6.3 0 3.4 1.3 1.1 3.4L2.7 5.1C4.5 3.4 6.9 2.4 9.5 2.4Z" fill="white"/><path d="M9.5 6.5C10.9 6.5 12.2 7 13.2 7.9L14.8 6.2C13.4 4.9 11.5 4.1 9.5 4.1C7.5 4.1 5.6 4.9 4.2 6.2L5.8 7.9C6.8 7 8.1 6.5 9.5 6.5Z" fill="white"/><path d="M9.5 11L11.8 8.6C11.1 8 10.3 7.7 9.5 7.7C8.7 7.7 7.9 8 7.2 8.6L9.5 11Z" fill="white"/></svg>
+        <svg width="14" height="11" viewBox="0 0 16 12" fill="none"><rect x="0" y="8" width="3" height="4" rx=".5" fill="white"/><rect x="4.3" y="5.5" width="3" height="6.5" rx=".5" fill="white"/><rect x="8.6" y="3" width="3" height="9" rx=".5" fill="white"/><rect x="13" y="0" width="3" height="12" rx=".5" fill="white" fill-opacity=".4"/></svg>
+        <svg width="22" height="11" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="2.5" stroke="white" stroke-opacity=".4"/><rect x="2" y="2" width="16" height="8" rx="1.5" fill="white"/><rect x="23" y="4" width="1.5" height="4" rx=".75" fill="white" fill-opacity=".4"/></svg>
+      </div>
+    </div>
+
+    <!-- App bar -->
+    <div class="appbar">
+      <div class="appbar-back">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </div>
+      <div class="appbar-content">
+        <div class="appbar-title">Swiggy</div>
+        <div class="appbar-sub">NSE ₹<span id="ltp">500.00</span> <span class="positive">(+2.34%)</span> &nbsp;·&nbsp; BSE ₹500.02</div>
+      </div>
+      <div class="appbar-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 16V4m0 0l-4 4m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+      </div>
+    </div>
+
+    <!-- Screen body -->
+    <div class="screen-body">
+
+      <!-- Product pills -->
+      <div class="pills">
+        <button class="pill">Delivery</button>
+        <button class="pill is-active">Intraday</button>
+        <button class="pill">MTF</button>
+      </div>
+
+      <!-- Qty -->
+      <div class="row">
+        <div class="row-label">Qty <span class="tag">NSE</span> <span class="chev">&#x25BE;</span></div>
+        <div class="field-col">
+          <div class="oc-input"><span>200</span></div>
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div class="row" style="align-items:flex-start;padding-top:4px;">
+        <div class="row-label" style="height:40px;display:flex;align-items:center;">Price <span class="tag">Limit</span> <span class="chev">&#x25BE;</span></div>
+        <div class="field-col">
+          <div class="oc-input">498.00</div>
+          <div class="helper">-0.50% from market</div>
+        </div>
+      </div>
+
+      <!-- Divider + SL -->
+      <div class="divider" style="margin-top:4px;"></div>
+      <div class="sl-header">
+        <div class="sl-label-group">
+          <div class="row-label">Stoploss (TSL)</div>
+          <div class="trail-sub">
+            <span class="trail-check">&#10003;</span>
+            Trail every <span class="trail-val">+₹2.00</span>
+          </div>
+        </div>
+        <div class="field-col">
+          <div class="oc-input">490.00<span class="cursor"></span></div>
+        </div>
+      </div>
+      <div class="est-pnl" data-pnl="sl">
+        <span class="est-pnl__label">Est. loss</span>
+        <span class="est-pnl__value-wrap">
+          <span class="est-pnl__value is-loss" data-mode="pnl">-₹1,600</span>
+        </span>
+        <button class="est-pnl__toggle" aria-label="Toggle P&L view">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="7 10 12 15 17 10"/><polyline points="7 4 12 9 17 4"/></svg>
+        </button>
+      </div>
+
+      <!-- Divider + TGT -->
+      <div class="divider" style="margin-top:4px;"></div>
+      <div class="row" style="padding-top:10px;">
+        <div class="row-label">Target (TGT)</div>
+        <div class="field-col">
+          <div class="oc-input">515.00</div>
+        </div>
+      </div>
+      <div class="est-pnl" data-pnl="tgt">
+        <span class="est-pnl__label">Est. profit</span>
+        <span class="est-pnl__value-wrap">
+          <span class="est-pnl__value is-profit" data-mode="pnl">+₹3,400</span>
+        </span>
+        <button class="est-pnl__toggle" aria-label="Toggle P&L view">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="7 10 12 15 17 10"/><polyline points="7 4 12 9 17 4"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dock -->
+    <div class="dock">
+      <div class="dock-balance">
+        <span>Balance: ₹1,00,000</span>
+        <div class="dock-margin">
+          <span style="border-bottom:1px dashed var(--g-text3);">Margin (5x):</span>
+          <span>₹19,920</span>
+        </div>
+      </div>
+      <button class="cta">Buy</button>
+    </div>
+
+    <!-- Numpad -->
+    <div class="numpad">
+      <div class="numpad-row"><button class="numpad-key">1</button><button class="numpad-key">2</button><button class="numpad-key">3</button></div>
+      <div class="numpad-row"><button class="numpad-key">4</button><button class="numpad-key">5</button><button class="numpad-key">6</button></div>
+      <div class="numpad-row"><button class="numpad-key">7</button><button class="numpad-key">8</button><button class="numpad-key">9</button></div>
+      <div class="numpad-row"><button class="numpad-key">.</button><button class="numpad-key">0</button><button class="numpad-key" style="font-size:18px;">&#9003;</button></div>
+    </div>
+
+    <div class="home-indicator"><span></span></div>
+  </div>
+</div>
+
+<p class="caption">
+  <strong>Est. P&L crossfade</strong> — tap either row to toggle between rupee and percentage views. 180ms ease-out with blur bridging.
+</p>
+
+<script>
+(function() {
+  var pnlViewMode = 'pnl';
+
+  var pnlData = {
+    sl: {
+      pnl:  { label: 'Est. loss',   text: '-₹1,600',           cls: 'is-loss' },
+      pct:  { label: '',            text: '-1.60% from market', cls: '' }
+    },
+    tgt: {
+      pnl:  { label: 'Est. profit', text: '+₹3,400',           cls: 'is-profit' },
+      pct:  { label: '',            text: '+3.40% from market', cls: '' }
+    }
+  };
+
+  function crossfade() {
+    document.querySelectorAll('.est-pnl').forEach(function(row) {
+      var key = row.dataset.pnl;
+      var data = pnlData[key];
+      if (!data) return;
+
+      var next = data[pnlViewMode];
+      var wrap = row.querySelector('.est-pnl__value-wrap');
+      var outgoing = wrap.querySelector('.est-pnl__value:not(.is-leaving)');
+      if (!outgoing) return;
+
+      var incoming = document.createElement('span');
+      incoming.className = 'est-pnl__value is-entering ' + next.cls;
+      incoming.textContent = next.text;
+      wrap.appendChild(incoming);
+
+      outgoing.classList.add('is-leaving');
+
+      row.querySelector('.est-pnl__label').textContent = next.label;
+
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          incoming.classList.remove('is-entering');
+        });
+      });
+
+      setTimeout(function() { outgoing.remove(); }, 180);
+    });
+  }
+
+  document.addEventListener('click', function(e) {
+    var row = e.target.closest('.est-pnl');
+    if (!row) return;
+    pnlViewMode = pnlViewMode === 'pct' ? 'pnl' : 'pct';
+    crossfade();
+  });
+
+  var pills = document.querySelectorAll('.pill');
+  pills.forEach(function(p) {
+    p.addEventListener('click', function() {
+      pills.forEach(function(q) { q.classList.remove('is-active'); });
+      p.classList.add('is-active');
+    });
+  });
+})();
+</script>
