@@ -65,11 +65,12 @@
     border-radius: var(--phone-body-radius);
     background: linear-gradient(165deg, var(--phone-blue-light) 0%, var(--phone-blue) 40%, var(--phone-blue-dark) 100%);
     box-shadow:
-      inset 0 0 0 1px rgba(255,255,255,0.25),
-      inset 0 1px 0 rgba(255,255,255,0.35),
-      0 40px 80px rgba(0,0,0,0.18),
-      0 12px 24px rgba(0,0,0,0.1);
-    padding: 10px;
+      inset 0 0 0 1px rgba(255,255,255,0.3),
+      inset 0 1px 0 rgba(255,255,255,0.4),
+      0 0 0 1px rgba(190,202,221,0.15),
+      0 40px 80px rgba(0,0,0,0.22),
+      0 12px 24px rgba(0,0,0,0.12);
+    padding: 14px;
   }
 
   /* titanium edge highlight */
@@ -86,9 +87,9 @@
   .phone::after {
     content: '';
     position: absolute;
-    right: -2px;
+    right: -3px;
     top: 160px;
-    width: 3px;
+    width: 4px;
     height: 64px;
     border-radius: 0 2px 2px 0;
     background: linear-gradient(180deg, var(--phone-blue-light), var(--phone-blue-dark));
@@ -98,9 +99,9 @@
   /* volume buttons */
   .vol-buttons {
     position: absolute;
-    left: -2px;
+    left: -3px;
     top: 180px;
-    width: 3px;
+    width: 4px;
     height: 44px;
     border-radius: 2px 0 0 2px;
     background: linear-gradient(180deg, var(--phone-blue-light), var(--phone-blue-dark));
